@@ -10,6 +10,11 @@ CREATE TABLE SERVICE_CENTER(
     CHECK (closing_time in('8:00 PM', '1:00 PM')),
     PRIMARY KEY(sc_id)
 );
+
+CREATE TABLE SERVICES (
+  s_no INTEGER PRIMARY KEY,
+  s_name varchar NOT NULL
+);
     
 CREATE TABLE SCHAVE(
     price INTEGER, 
@@ -21,6 +26,32 @@ CREATE TABLE SCHAVE(
     FOREIGN KEY(sc_id) REFERENCES SERVICE_CENTER(sc_id),
     FOREIGN KEY(vin) REFERENCES VEHICLE(vin)
 )
+
+CREATE TABLE VEHICLE (
+  vin varchar(8) PRIMARY KEY,
+  manufacturer varchar(10) NOT NULL,
+  current_mileage INTEGER NOT NULL,
+  year INTEGER NOT NULL
+);
+
+CREATE TABLE MAINTENANCE (
+  schedule_name char,
+  s_no INTEGER PRIMARY KEY,
+  FOREIGN KEY (s_no) REFERENCES SERVICES(s_no)
+);
+CREATE TABLE REPAIR (
+  cat_name VARCHAR,
+  s_no INTEGER PRIMARY KEY,
+  FOREIGN KEY (s_no) REFERENCES SERVICES(s_no)
+);
+CREATE TABLE VM_SERVICED (
+  date datetime NOT NULL,
+  s_no INTEGER,
+  vin varchar,
+  PRIMARY KEY(vin,s_no),
+  FOREIGN KEY (s_no) REFERENCES SERVICES(s_no),
+  FOREIGN KEY (vin) REFERENCES VEHICLE(vin)
+);
 
 CREATE TABLE EMPLOYEE(
     emp_id NUMBER(9),
@@ -52,10 +83,55 @@ CREATE TABLE CONTRACT_EMP(
     FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id)
 )
 
+Create table OWNS(
+    sc_id VARCHAR, 
+    c_id int NOT NULL, 
+    vin VARCHAR(8) NOT NULL, 
+    FOREIGN KEY (vin) REFERENCES VEHICLE(vin), 
+    FOREIGN KEY(c_id) REFERENCES CUSTOMER_ASSOCIATED_SC(c_id), 
+    FOREIGN KEY(sc_id) REFERENCES SERVICE_CENTER(sc_id)
+); 
 
+Create table CUSTOMER_ASSOCIATED_SC(
+    c_id int NOT NULL, 
+    c_status int, 
+    c_fame varchar(20), 
+    c_lame varchar(20), 
+    PRIMARY KEY(c_id, sc_id), 
+    sc_id int NOT NULL, 
+    FOREIGN KEY (sc_id) REFERENCES SERVICE_CENTER(sc_id)
+);
 
-Create table OWNS(c_id int NOT NULL, vin int NOT NULL, FOREIGN KEY (vin) REFERENCES VEHICLE(vin)) 
+Create table SE_REQUESTED(
+    sc_id VARCHAR, 
+    c_id int NOT NULL, 
+    sevent_id varchar NOT NULL, 
+    total_amount_paid int, 
+    amount_charged int, 
+    s_no int NOT NULL, 
+    mechanic_id int NOT NULL, 
+    FOREIGN KEY(sc_id) REFERENCES SERVICE_CENTER(sc_id), 
+    FOREIGN KEY(s_no) REFERENCES SERVICES(s_no), 
+    FOREIGN KEY(c_id) REFERENCES CUSTOMER(c_id), 
+    FOREIGN KEY (mechanic_id) REFERENCES EMPLOYEE(emp_id)
+);
 
-Create table CUSTOMER_ASSOCIATED_SC(c_id int NOT NULL, c_status int, c_fame varchar(20), c_lame varchar(20), PRIMARY KEY(c_id, sc_id), sc_id int NOT NULL, FOREIGN KEY (sc_id) REFERENCES SERVICE_CENTER(sc_id)) 
+CREATE TABLE CUSTOMER_ADDED(
+    c_id int, 
+    sc_id VARCHAR, 
+    emp_id Number(9), 
+    FOREIGN KEY(c_id) REFERENCES CUSTOMER_ASSOCIATED_SC(c_id),
+    FOREIGN KEY(sc_id) REFERENCES SERVICE_CENTER(sc_id),
+    FOREIGN KEY(emp_id) REFERENCES EMPLOYEE(emp_id),
+);
 
-Create table SERVICE_EVENT(c_id int NOT NULL, sevent_id varchar NOT NULL, total_amount_paid int, amount_charged int, s_no int NOT NULL, mechanic_id int NOT NULL, FOREIGN KEY(s_no) REFERENCES SERVICES(s_no), FOREIGN KEY(c_id) REFERENCES CUSTOMER(c_id), FOREIGN KEY (mechanic_id) REFERENCES EMPLOYEE(emp_id));
+CREATE TABLE DONE_ON(
+    sc_id VARCHAR,
+    c_id int,
+    vin VARCHAR(8),
+    sevent_id VARCHAR,
+    FOREIGN KEY(c_id) REFERENCES CUSTOMER_ASSOCIATED_SC(c_id),
+    FOREIGN KEY(sc_id) REFERENCES SERVICE_CENTER(sc_id),
+    FOREIGN KEY (vin) REFERENCES VEHICLE(vin), 
+    FOREIGN KEY (sevent_id) REFERENCES SE_REQUESTED(sevent_id), 
+);
