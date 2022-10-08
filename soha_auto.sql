@@ -1,4 +1,4 @@
-CREATE TABLE Employee(
+CREATE TABLE EMPLOYEE(
     emp_id NUMBER(9),
     sc_id VARCHAR2 NOT NULL,
     emp_name VARCHAR2(50) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE Employee(
 );
 
 
-CREATE TABLE Hourly_Emp(
+CREATE TABLE HOURLY_EMP(
     emp_id NUMBER(9),
     sc_id VARCHAR NOT NULL,
     hourly_rate INTEGER NOT NULL,
@@ -21,11 +21,11 @@ CREATE TABLE Hourly_Emp(
     FOREIGN KEY (sc_id) REFERENCES SERVICE_CENTER(sc_id)
 )
 
-CREATE TABLE Contract_Emp(
+CREATE TABLE CONTRACT_EMP(
     emp_id NUMBER(9),
     annual_salary INTEGER NOT NULL,
     PRIMARY KEY (emp_id),
-    FOREIGN KEY (emp_id) REFERENCES Employee(emp_id)
+    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id)
 )
 
 
