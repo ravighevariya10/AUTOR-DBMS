@@ -1,0 +1,30 @@
+CREATE TABLE VEHICLE (
+  vin varchar(8) PRIMARY KEY,
+  manufacturer varchar(10) NOT NULL,
+  current_mileage INTEGER NOT NULL,
+  year INTEGER NOT NULL
+);
+
+CREATE TABLE SERVICES (
+  s_no INTEGER PRIMARY KEY,
+  name varchar NOT NULL
+);
+
+CREATE TABLE MAINTENANCE (
+  schedule_name char,
+  s_no INTEGER PRIMARY KEY,
+  FOREIGN KEY (s_no) REFERENCES SERVICES
+);
+CREATE TABLE REPAIR (
+  sub_category char,
+  s_no INTEGER PRIMARY KEY,
+  FOREIGN KEY (s_no) REFERENCES SERVICES
+);
+CREATE TABLE DID (
+  date datetime NOT NULL,
+  s_no INTEGER,
+  vin varchar,
+  PRIMARY KEY(vin,s_no),
+  FOREIGN KEY (s_no) REFERENCES SERVICES,
+  FOREIGN KEY (vin) REFERENCES VEHICLE
+);
