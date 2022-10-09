@@ -118,7 +118,7 @@ Create table SERVICEEVENT(
     amount_charged int, 
     s_no int NOT NULL, 
     mechanic_id int NOT NULL, 
-    PRIMARY KEY(c_id, sc_id, sevent_id),
+    PRIMARY KEY(c_id, sc_id, sevent_id, mechanic_id),
     FOREIGN KEY(c_id, sc_id) REFERENCES CUSTOMER(c_id, sc_id) ON DELETE CASCADE, 
     FOREIGN KEY(s_no) REFERENCES SERVICES(s_no) ON DELETE CASCADE, 
     FOREIGN KEY (mechanic_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE
