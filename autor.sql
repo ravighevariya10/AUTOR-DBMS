@@ -128,6 +128,7 @@ CREATE TABLE CUSTOMER_ADDED(
     c_id int, 
     sc_id VARCHAR(20), 
     emp_id Number(9), 
+    PRIMARY KEY(c_id,sc_id,emp_id),
     FOREIGN KEY(c_id, sc_id) REFERENCES CUSTOMER(c_id, sc_id) ON DELETE CASCADE,
     FOREIGN KEY(emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE
 );
