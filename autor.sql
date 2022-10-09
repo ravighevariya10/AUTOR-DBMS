@@ -138,6 +138,7 @@ CREATE TABLE DONE_ON(
     c_id int,
     vin VARCHAR(8),
     sevent_id VARCHAR(20),
+    PRIMARY_KEY(sc_id,c_id,vin,sevent_id),
     FOREIGN KEY(vin) REFERENCES VEHICLE(vin), 
     FOREIGN KEY(sevent_id, c_id, sc_id) REFERENCES SERVICEEVENT(sevent_id, c_id, sc_id)
 );
