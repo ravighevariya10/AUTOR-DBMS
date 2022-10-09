@@ -59,7 +59,7 @@ CREATE TABLE VM_SERVICED (
 );
 
 CREATE TABLE EMPLOYEE(
-    emp_id NUMBER(9),
+    emp_id NUMBER(9) NOT NULL,
     sc_id VARCHAR(20) NOT NULL,
     emp_name VARCHAR(50) NOT NULL,
     emp_email VARCHAR(50),
@@ -67,32 +67,28 @@ CREATE TABLE EMPLOYEE(
     emp_contact CHAR(10),
     emp_role VARCHAR(6) CONSTRAINT role_type 
     CHECK (emp_role in('MANAGER','RECEPTIONIST','MECHANIC')),
-    PRIMARY KEY(emp_id),
+    PRIMARY KEY(emp_id,sc_id),
     FOREIGN KEY (sc_id) REFERENCES SERVICE_CENTER(sc_id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE HOURLY_EMP(
-    emp_id NUMBER(9),
+    emp_id NUMBER(9) NOT NULL,
+    sc_id  VARCHAR(20) NOT NULL,
     hourly_rate INTEGER NOT NULL,
-    PRIMARY KEY (emp_id),
-    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE
+    PRIMARY KEY (emp_id,sc_id),
+    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE,
+    FOREIGN KEY (sc_id) REFERENCES EMPLOYEE(sc_id) ON DELETE CASCADE
 )
 
 CREATE TABLE CONTRACT_EMP(
     emp_id NUMBER(9),
+    sc_id  VARCHAR(20) NOT NULL,
     annual_salary INTEGER NOT NULL,
-    PRIMARY KEY (emp_id),
-    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE
-)
-
-CREATE TABLE PAYS(
-    emp_id NUMBER(9),
-    sc_id VARCHAR(20) NOT NULL,
-    PRIMARY KEY(emp_id, sc_id),
+    PRIMARY KEY (emp_id,sc_id),
     FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE,
-    FOREIGN KEY (sc_id) REFERENCES SERVICE_CENTER(sc_id) ON DELETE CASCADE
-);
+    FOREIGN KEY (sc_id) REFERENCES EMPLOYEE(sc_id) ON DELETE CASCADE
+)
 
 Create table CUSTOMER(
     c_id int NOT NULL, 
