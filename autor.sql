@@ -17,6 +17,13 @@ CREATE TABLE SERVICES(
   PRIMARY KEY(s_no)
 );
     
+CREATE TABLE VEHICLE (
+  vin varchar(8) PRIMARY KEY,
+  manufacturer varchar(10) NOT NULL,
+  current_mileage INTEGER NOT NULL,
+  year INTEGER NOT NULL
+);
+
 CREATE TABLE SCHAVE(
     price INTEGER, 
     duration VARCHAR(15),
@@ -29,12 +36,6 @@ CREATE TABLE SCHAVE(
     FOREIGN KEY(vin) REFERENCES VEHICLE(vin) ON DELETE CASCADE
 );
 
-CREATE TABLE VEHICLE (
-  vin varchar(8) PRIMARY KEY,
-  manufacturer varchar(10) NOT NULL,
-  current_mileage INTEGER NOT NULL,
-  year INTEGER NOT NULL
-);
 
 CREATE TABLE MAINTENANCE (
   schedule_name char,
@@ -75,7 +76,7 @@ CREATE TABLE HOURLY_EMP(
     emp_id NUMBER(9),
     hourly_rate INTEGER NOT NULL,
     PRIMARY KEY (emp_id),
-    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE,
+    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE
 )
 
 CREATE TABLE CONTRACT_EMP(
@@ -89,7 +90,7 @@ CREATE TABLE PAYS(
     emp_id NUMBER(9),
     sc_id VARCHAR(20) NOT NULL,
     PRIMARY KEY(emp_id, sc_id),
-    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE
+    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE,
     FOREIGN KEY (sc_id) REFERENCES SERVICE_CENTER(sc_id) ON DELETE CASCADE
 );
 
