@@ -133,7 +133,7 @@ Create table CUSTOMER(
 );
 
 
-Create table OWNS(
+Create table VEHICLE_OWNED(
     sc_id VARCHAR(20), 
     c_id int NOT NULL, 
     vin VARCHAR(8) NOT NULL,
