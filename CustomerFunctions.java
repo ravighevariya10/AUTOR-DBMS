@@ -1,3 +1,41 @@
+class Customer
+{
+    public void customerOptions()
+    {
+        Home home = new Home();
+        Scanner customer_input = new Scanner(System.in);
+
+        System.out.println("\n1.  View and Update Profile");
+        System.out.println("2.  View and Schedule Service");
+        System.out.println("3.  Invoices");
+        System.out.println("4.  Logout");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_input_value = customer_input.nextLine();
+        switch(customer_input_value)
+        {
+            case "1":
+                home.customerProfile();
+                break;
+            case "2":
+                home.viewScheduleService();
+                break;
+            case "3":
+                break;
+            case "4":
+                System.out.println("\nYou are logged out.");
+                home.homeOptions();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerOptions();
+                break;
+        }
+    }
+}
+///-----------------Start Akruti Edits--------
+
 class CustomerProfileOptions
 {
     public void customerProfile()
@@ -26,7 +64,7 @@ class CustomerProfileOptions
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                home.customerOptions();
+                customerProfile();
                 break;
         }
     }
@@ -59,7 +97,7 @@ class CustomerViewProfile
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                home.customerOptions();
+                customerViewProfile();
                 break;
         }
     }
@@ -98,7 +136,7 @@ class CustomerAddCar
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                home.customerOptions();
+                customerAddNewCar();
                 break;
         }
     }
@@ -166,7 +204,7 @@ class CustomerViewScheduleServices
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                home.customerOptions();
+                viewScheduleService();
                 break;
         }
     }
@@ -195,7 +233,7 @@ class CustomerViewServiceHistory
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                home.customerOptions();
+                viewServiceHistory();
                 break;
         }
     }
