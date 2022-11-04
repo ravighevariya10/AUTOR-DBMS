@@ -93,8 +93,8 @@ CREATE TABLE CONTRACT_EMP(
 Create table CUSTOMER(
     c_id int NOT NULL, 
     c_status int, 
-    c_fame varchar(20), 
-    c_lame varchar(20), 
+    c_fname varchar(20), 
+    c_lname varchar(20), 
     sc_id VARCHAR(20) NOT NULL, 
     PRIMARY KEY(c_id, sc_id), 
     FOREIGN KEY (sc_id) REFERENCES SERVICE_CENTER(sc_id) ON DELETE CASCADE
