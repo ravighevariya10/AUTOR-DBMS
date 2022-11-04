@@ -96,7 +96,7 @@ CREATE TABLE EMPLOYEE(
     emp_name VARCHAR(50) NOT NULL,
     emp_email VARCHAR(50),
     emp_Address VARCHAR(100),
-    emp_contact CHAR(10),
+    emp_contact VARCHAR(10),
     emp_role VARCHAR(6) CONSTRAINT role_type 
     CHECK (emp_role in('MANAGER','RECEPTIONIST','MECHANIC')),
     PRIMARY KEY(emp_id,sc_id),
