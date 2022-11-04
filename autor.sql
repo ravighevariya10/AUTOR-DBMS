@@ -2,6 +2,8 @@ CREATE TABLE SERVICE_CENTER(
     sc_id VARCHAR(20) NOT NULL, 
     telephone_no NUMBER, 
     address VARCHAR(50), 
+    manager_id NUMBER(9) NOT NULL, 
+    hourly_rate NUMBER,
     working_days VARCHAR(20) CONSTRAINT working_days
     CHECK (working_days in('M-F','SAT')), 
     opening_time VARCHAR(20) CONSTRAINT opening_time
