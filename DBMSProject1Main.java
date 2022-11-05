@@ -1012,6 +1012,11 @@ class Manager
         switch(manager_add_employees_input_value)
         {
             case "1":
+                if((role.equalsIgnoreCase("receptionist")||(role.equalsIgnoreCase("mechanic")))
+                   //Go for it
+                   System.out.println("Okay");
+                else
+                   System.out.println("You don't have permission to add employees for this role.");
                 break;
             case "2":
                 managerSetUpStore();
@@ -1187,6 +1192,11 @@ class Manager
         switch(manager_add_new_employees_input_value)
         {
             case "1":
+                if((role.equalsIgnoreCase("receptionist")||(role.equalsIgnoreCase("mechanic")))
+                   //Go for it
+                   System.out.println("Okay");
+                else
+                   System.out.println("You don't have permission to add employees for this role.");
                 break;
             case "2":
                 managerOptions();
