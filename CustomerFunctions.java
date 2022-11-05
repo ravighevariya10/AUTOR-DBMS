@@ -197,7 +197,9 @@ class CustomerViewScheduleServices
         {
             case "1":
                 home.viewServiceHistory();
+                break;
             case "2":
+                home.customerScheduleService();
                 break;
             case "3":
                 home.customerOptions();
@@ -234,6 +236,47 @@ class CustomerViewServiceHistory
             default:
                 System.out.println("\n\nInvalid Input");
                 viewServiceHistory();
+                break;
+        }
+    }
+}
+
+class CustomerScheduleService
+{
+    public void customerScheduleService()
+    {
+        Home home = new Home();
+        Scanner customer_schedule_service_input = new Scanner(System.in);
+
+        System.out.println("\n1.  Enter VIN Number of Car");
+        String customer_vin_input_value = customer_schedule_service_input.nextLine();
+        System.out.println("\n1.  Enter Current Mileage of Car");
+        String customer_mileage_input_value = customer_schedule_service_input.nextLine();
+
+        Scanner customer_schedule_service_input2 = new Scanner(System.in);
+
+        System.out.println("\n1.  Add Schedule Maintenance");
+        System.out.println("2.  Add Schedule Repair");
+        System.out.println("2.  View Cart and select Schedule Time");
+        System.out.println("3.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_schedule_service_input2_value = customer_schedule_service_input2.nextLine();
+
+        switch(customer_schedule_service_input2_value)
+        {
+            case "1":
+                // home.customerOptions();
+                break;
+            case "2":
+               // home.customerOptions();
+                break;
+            case "3":
+                home.viewScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerScheduleService();
                 break;
         }
     }
