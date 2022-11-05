@@ -161,8 +161,10 @@ class Customer
         switch(customer_input_value)
         {
             case "1":
+                customerProfile();
                 break;
             case "2":
+                viewScheduleService();
                 break;
             case "3":
                 break;
@@ -173,6 +175,340 @@ class Customer
             default:
                 System.out.println("\n\nInvalid Input");
                 customerOptions();
+                break;
+        }
+    }
+
+    public void customerProfile()
+    {
+        Scanner customer_profile_input = new Scanner(System.in);
+
+        System.out.println("\n1.  View Profile");
+        System.out.println("2.  Add Car");
+        System.out.println("3.  Delete Car");
+        System.out.println("4.  Go Back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_profile_input_value = customer_profile_input.nextLine();
+        switch(customer_profile_input_value)
+        {
+            case "1":
+                customerViewProfile();
+                break;
+            case "2":
+                customerAddNewCar();
+                break;
+            case "3":
+                customerDeleteCar();
+                break;
+            case "4":
+                customerOptions();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerProfile();
+                break;
+        }
+    }
+
+    public void customerViewProfile()
+    {        
+        System.out.print("\nCustomer ID: ");       
+        System.out.print("First Name: ");      
+        System.out.print("Last Name: ");    
+        System.out.print("Address: ");     
+        System.out.print("Email Address: ");     
+        System.out.print("Phone Number: ");
+        System.out.print("List of all Cars: ");
+
+        System.out.println();
+        System.out.println("1.  Go Back");
+
+        System.out.print("\nEnter your choice here: ");
+        Scanner customer_view_profile_input = new Scanner(System.in);
+
+        String customer_view_profile_input_value = customer_view_profile_input.nextLine();
+        switch(customer_view_profile_input_value)
+        {
+            case "1":
+                customerProfile();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerViewProfile();
+                break;
+        }
+    }
+
+    public void customerAddNewCar()
+    {
+        Scanner customer_add_car_input = new Scanner(System.in);
+
+        System.out.print("\nVIN number: ");
+        String vin_number = customer_add_car_input.nextLine();
+        System.out.print("Car Manufacturer Name: ");
+        String manufacturer_name = customer_add_car_input.nextLine();
+        System.out.print("Current Mileage: ");
+        String mileage = customer_add_car_input.nextLine();
+        System.out.print("Year: ");
+        String year = customer_add_car_input.nextLine();
+        System.out.println();
+
+        System.out.println("1.  Save Information");
+        System.out.println("2.  Cancel");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_add_car_input_value = customer_add_car_input.nextLine();
+        switch(customer_add_car_input_value)
+        {
+            case "1":
+                break;
+            case "2":
+                customerProfile();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerAddNewCar();
+                break;
+        }
+    }
+
+    public void customerDeleteCar()
+    {
+
+        Scanner customer_delete_car_input = new Scanner(System.in);
+
+        System.out.print("\nVIN number: ");
+        String vin_number = customer_delete_car_input.nextLine();
+        System.out.print("Car Manufacturer Name: ");
+        String manufacturer_name = customer_delete_car_input.nextLine();
+        System.out.print("Current Mileage: ");
+        String mileage = customer_delete_car_input.nextLine();
+        System.out.print("Year: ");
+        String year = customer_delete_car_input.nextLine();
+        System.out.println();
+
+        System.out.println("\n1.  Select the car to delete");
+        System.out.println("2.  Go back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String admin_add_delete_car_input_value = customer_delete_car_input.nextLine();
+        switch(admin_add_delete_car_input_value)
+        {
+            case "1":
+                break;
+            case "2":
+                customerProfile();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerDeleteCar();
+                break;
+        }
+    }
+
+    public void viewScheduleService()
+    {
+        Scanner customer_view_schedule_service_input = new Scanner(System.in);
+
+        System.out.println("\n1.  View Service History");
+        System.out.println("2.  Schedule Service");
+        System.out.println("3.  Go Back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_view_schedule_service_input_value = customer_view_schedule_service_input.nextLine();
+        switch(customer_view_schedule_service_input_value)
+        {
+            case "1":
+                viewServiceHistory();
+                break;
+            case "2":
+                customerScheduleService();
+                break;
+            case "3":
+                customerOptions();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                viewScheduleService();
+                break;
+        }
+    }
+
+    public void viewServiceHistory()
+    {
+        Scanner customer_view_service_input = new Scanner(System.in);
+
+        System.out.print("\n1.  Enter VIN Number of Car");
+        String vin = customer_view_service_input.nextLine();
+//------------------SHOW HISTORY---------------------
+        System.out.println("1.  Show History");
+        System.out.println("2.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+       
+        String customer_view_service_input_value = customer_view_service_input.nextLine();
+
+        switch(customer_view_service_input_value)
+        {
+            case "1":
+                break;
+            case "2":
+                viewScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                viewServiceHistory();
+                break;
+        }
+    }
+
+    public void customerScheduleService()
+    {
+        Scanner customer_schedule_service_input = new Scanner(System.in);
+
+        System.out.println("\n1.  Enter VIN Number of Car");
+        String vin = customer_schedule_service_input.nextLine();
+        System.out.println("\n1.  Enter Current Mileage of Car");
+        String mileage = customer_schedule_service_input.nextLine();
+        System.out.println();
+        System.out.println("\n1.  Add Schedule Maintenance");
+        System.out.println("2.  Add Schedule Repair");
+        System.out.println("3.  View Cart and select Schedule Time");
+        System.out.println("4.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_schedule_service_input_value = customer_schedule_service_input.nextLine();
+
+        switch(customer_schedule_service_input_value)
+        {
+            case "1":
+                customerScheduleMaintenance();
+                break;
+            case "2":
+                customerScheduleRepair();
+                break;
+            case "3":
+                customerViewCart();
+                break;   
+            case "4":
+                viewScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerScheduleService();
+                break;
+        }
+    }
+
+    public void customerScheduleMaintenance()
+    {
+        System.out.println("\n1.  These are the list of services you are eligible for:");
+        //--Display a message with the service schedule the customer is eligible for (A, B, or C) and the cost.
+
+        Scanner customer_schedule_maintenance_input = new Scanner(System.in);
+
+        System.out.println("\n1.  A");
+        System.out.println("2.  B");
+        System.out.println("2.  C");
+        System.out.println("D.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_schedule_maintenance_input_value = customer_schedule_maintenance_input.nextLine();
+
+        switch(customer_schedule_maintenance_input_value)
+        {
+            case "A":
+                // home.customerOptions();
+                break;
+            case "B":
+               // home.customerOptions();
+                break;
+            case "C":
+               // home.customerOptions();
+                break;    
+            case "D":
+                customerScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerScheduleMaintenance();
+                break;
+        }
+    }
+
+    public void customerScheduleRepair()
+    {
+        Scanner customer_schedule_repair_input = new Scanner(System.in);
+
+        System.out.println("\n1.  Engine Services");
+        System.out.println("2.  Exhaust Services");
+        System.out.println("3.  Electrical Services");
+        System.out.println("4.  Transmission Services");
+        System.out.println("5.  Tire Services");
+        System.out.println("6.  Heating and AC Services");
+        System.out.println("7.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_schedule_repair_input_value = customer_schedule_repair_input.nextLine();
+
+        switch(customer_schedule_repair_input_value)
+        {
+            case "1":
+                 //home.customerScheduleMaintenance();
+                break;
+            case "2":
+               // home.customerOptions();
+                break;
+            case "3":
+                //home.customerScheduleService();
+                break;
+            case "4":
+                //home.customerScheduleService();
+                break;
+            case "5":
+                //home.customerScheduleService();
+                break;
+            case "6":
+                //home.customerScheduleService();
+                break;
+            case "7":
+                //home.customerScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerScheduleRepair();
+                break;
+        }
+    }
+
+    public void customerViewCart()
+    { 
+        System.out.println("\n1.  These are the list of services in your cart. Do you wish to proceed to checkout?");
+        //--list of services in cart
+
+        Scanner customer_view_cart_input = new Scanner(System.in);
+
+        System.out.println("\n1.  Proceed with Scheduling");
+        System.out.println("2.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_view_cart_input_value = customer_view_cart_input.nextLine();
+
+        switch(customer_view_cart_input_value)
+        {
+            case "1":
+                // home.customerOptions();
+                break;
+            case "2":
+                customerScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerViewCart();
                 break;
         }
     }
