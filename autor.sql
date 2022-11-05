@@ -40,8 +40,19 @@ CREATE TABLE SERVICES_PROVIDED_DETAILS(
 
 
 CREATE TABLE MAINTENANCE (
-  schedule_name char,
+ SCHEDULE_NAME CHAR(1),
+ S_NO NUMBER(38) NOT NULL,
+ SERVICE_NAME VARCHAR2(20),
+ SERVICE_TYPE VARCHAR2(5),
+ DURATION NUMBER,
+ PRIMARY KEY(S_NO, SCHEDULE_NAME),
+ FOREIGN KEY (s_no) REFERENCES SERVICES(s_no) ON DELETE CASCADE
+);
+
+CREATE TABLE REPAIR (
+  service_name VARCHAR(20),
   s_no INTEGER PRIMARY KEY,
+  duration NUMBER,
   FOREIGN KEY (s_no) REFERENCES SERVICES(s_no) ON DELETE CASCADE
 );
 
@@ -153,24 +164,25 @@ Create table SERVICEEVENT(
     PRIMARY KEY(c_id, sc_id, sevent_id, mechanic_id),
     FOREIGN KEY(c_id, sc_id) REFERENCES CUSTOMER(c_id, sc_id) ON DELETE CASCADE, 
     FOREIGN KEY(s_no) REFERENCES SERVICES(s_no) ON DELETE CASCADE, 
-    FOREIGN KEY (mechanic_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE
+    FOREIGN KEY (mechanic_id, sc_id) REFERENCES EMPLOYEE(emp_id,sc_id) ON DELETE CASCADE
 );
 
-CREATE TABLE CUSTOMER_ADDED(
+CREATE TABLE CUSTOMER_ADDED_DETAILS(
     c_id int, 
     sc_id VARCHAR(20), 
     emp_id Number(9), 
     PRIMARY KEY(c_id,sc_id,emp_id),
     FOREIGN KEY(c_id, sc_id) REFERENCES CUSTOMER(c_id, sc_id) ON DELETE CASCADE,
-    FOREIGN KEY(emp_id) REFERENCES EMPLOYEE(emp_id) ON DELETE CASCADE
+    FOREIGN KEY(emp_id, sc_id) REFERENCES EMPLOYEE(emp_id,sc_id) ON DELETE CASCADE
 );
 
-CREATE TABLE DONE_ON(
+CREATE TABLE SERVICE_EVENT_ON_VEHICLE(
     sc_id VARCHAR(20),
     c_id int,
     vin VARCHAR(8),
     sevent_id VARCHAR(20),
+    mechanic_id int NOT NULL, 
     PRIMARY KEY(sc_id,c_id,vin,sevent_id),
     FOREIGN KEY(vin) REFERENCES VEHICLE(vin), 
-    FOREIGN KEY(sevent_id, c_id, sc_id) REFERENCES SERVICEEVENT(sevent_id, c_id, sc_id)
+    FOREIGN KEY(sevent_id, c_id, sc_id, mechanic_id) REFERENCES SERVICEEVENT(sevent_id, c_id, sc_id, mechanic_id)
 );
