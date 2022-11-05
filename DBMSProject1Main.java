@@ -1,11 +1,44 @@
 import java.util.Scanner;
 
-class AdminSystemSetUp
+class Admin
 {
+    public void adminOptions()
+    {
+        Home home = new Home();
+        Scanner admin_input = new Scanner(System.in);
+
+        System.out.println("\n1.  System Set up");
+        System.out.println("2.  Add New Store");
+        System.out.println("3.  Add New Service");
+        System.out.println("4.  Logout");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String admin_input_value = admin_input.nextLine();
+        switch(admin_input_value)
+        {
+            case "1":
+                adminSystemSetUpOptions();
+                break;
+            case "2":
+                adminAddNewStore();
+                break;
+            case "3":
+                adminAddNewService();
+                break;
+            case "4":
+                System.out.println("\nYou are logged out.");
+                home.homeOptions();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                adminOptions();
+                break;
+        }
+    }
+
     public void adminSystemSetUpOptions()
     {
-        Admin admin = new Admin();
-
         Scanner admin_system_setup_input = new Scanner(System.in);
 
         System.out.println("\n1.  Upload service general information");
@@ -22,7 +55,7 @@ class AdminSystemSetUp
             case "2":
                 break;
             case "3":
-                admin.adminOptions();
+                adminOptions();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
@@ -30,14 +63,9 @@ class AdminSystemSetUp
                 break;
         }
     }
-}
 
-class AdminAddNewStore
-{
     public void adminAddNewStore()
     {
-        Admin admin = new Admin();
-
         Scanner admin_add_new_store_input = new Scanner(System.in);
 
         System.out.print("\nStore ID: ");
@@ -73,7 +101,7 @@ class AdminAddNewStore
             case "1":
                 break;
             case "2":
-                admin.adminOptions();
+                adminOptions();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
@@ -81,42 +109,35 @@ class AdminAddNewStore
                 break;
         }
     }
-}
 
-class Admin
-{
-    public void adminOptions()
+    public void adminAddNewService()
     {
-        Home home = new Home();
-        AdminSystemSetUp adminSystemSetUp = new AdminSystemSetUp();
-        AdminAddNewStore adminAddNewStore =  new AdminAddNewStore();
-        Scanner admin_input = new Scanner(System.in);
+        Scanner admin_add_new_service_input = new Scanner(System.in);
 
-        System.out.println("\n1.  System Set up");
-        System.out.println("2.  Add New Store");
-        System.out.println("3.  Add New Service");
-        System.out.println("4.  Logout");
+        System.out.print("\nEnter existing service category: ");
+        String service_category = admin_add_new_service_input.nextLine();
+        System.out.print("Service Name: ");
+        String service_name = admin_add_new_service_input.nextLine();
+        System.out.print("Duration: ");
+        String duration = admin_add_new_service_input.nextLine();
+        System.out.println();
+
+        System.out.println("\n1.  Add Service");
+        System.out.println("2.  Go Back");
 
         System.out.print("\nEnter your choice here: ");
 
-        String admin_input_value = admin_input.nextLine();
-        switch(admin_input_value)
+        String admin_add_new_service_input_value = admin_add_new_service_input.nextLine();
+        switch(admin_add_new_service_input_value)
         {
             case "1":
-                adminSystemSetUp.adminSystemSetUpOptions();
                 break;
             case "2":
-                adminAddNewStore.adminAddNewStore();
-                break;
-            case "3":
-                break;
-            case "4":
-                System.out.println("\nYou are logged out.");
-                home.homeOptions();
+                adminOptions();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                adminOptions();
+                adminAddNewService();
                 break;
         }
     }
