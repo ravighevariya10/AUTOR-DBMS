@@ -195,10 +195,8 @@ class Receptionist
         switch(receptionist_input_value)
         {
             case "1":
-                addNewCustomerProfile();
                 break;
             case "2":
-                findCustomerWithPendingInvoice();
                 break;
             case "3":
                 System.out.println("\nYou are logged out.");
@@ -207,76 +205,6 @@ class Receptionist
             default:
                 System.out.println("\n\nInvalid Input");
                 receptionistOptions();
-                break;
-        }
-    }
-
-    public void addNewCustomerProfile()
-    {
-        Scanner add_new_customer_profile = new Scanner(System.in);
-
-        System.out.print("\nCustomer Name: ");
-        String customer_name = add_new_customer_profile.nextLine();
-        System.out.print("Address: ");
-        String address = add_new_customer_profile.nextLine();
-        System.out.print("Email Address: ");
-        String email_address = add_new_customer_profile.nextLine();
-        System.out.print("Phone Number: ");
-        String phone_number = add_new_customer_profile.nextLine();
-        System.out.print("Username: ");
-        String username = add_new_customer_profile.nextLine();
-        System.out.print("VIN Number: ");
-        String vin_number = add_new_customer_profile.nextLine();
-        System.out.print("Car Manufacturer: ");
-        String car_manufacturer = add_new_customer_profile.nextLine();
-        System.out.println();
-
-        System.out.println("1.  Go Back");
-
-        System.out.print("\nEnter your choice here: ");
-
-        String add_new_customer_profile_value = add_new_customer_profile.nextLine();
-        switch(add_new_customer_profile_value)
-        {
-            case "1":
-                receptionistOptions();
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                addNewCustomerProfile();
-                break;
-        }
-    }
-
-    public void findCustomerWithPendingInvoice()
-    {
-        Scanner find_customer_with_pending_invoice = new Scanner(System.in);
-
-        System.out.print("\nCustomer ID: ");
-        String customer_id = find_customer_with_pending_invoice.nextLine();
-        System.out.print("Customer Name: ");
-        String customer_name = find_customer_with_pending_invoice.nextLine();
-        System.out.print("Invoice ID: ");
-        String invoice_id = find_customer_with_pending_invoice.nextLine();
-        System.out.print("Invoice Date: ");
-        String invoice_date = find_customer_with_pending_invoice.nextLine();
-        System.out.print("Amount: ");
-        String amount = find_customer_with_pending_invoice.nextLine();
-        System.out.println();
-
-        System.out.println("1.  Go Back");
-
-        System.out.print("\nEnter your choice here: ");
-
-        String find_customer_with_pending_invoice_value = find_customer_with_pending_invoice.nextLine();
-        switch(find_customer_with_pending_invoice_value)
-        {
-            case "1":
-                receptionistOptions();
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                findCustomerWithPendingInvoice();
                 break;
         }
     }
@@ -584,16 +512,12 @@ class Mechanic
         switch(mechanic_input_value)
         {
             case "1":
-                viewScedule();
                 break;
             case "2":
-                requestTimeOff();
                 break;
             case "3":
-                requestSwap();
                 break;
             case "4":
-                AcceptRejectSwap();
                 break;
             case "5":
                 System.out.println("\nYou are logged out.");
@@ -602,160 +526,6 @@ class Mechanic
             default:
                 System.out.println("\n\nInvalid Input");
                 mechanicOptions();
-                break;
-        }
-    }
-
-    public void viewScedule()
-    {
-        Scanner view_schedule = new Scanner(System.in);
-
-        System.out.print("\nList of Time Slot When Mechanic is Booked for Service: ");
-        String mechanic_booked_time = view_schedule.nextLine();
-        System.out.println();
-
-        System.out.println("1.  Go Back");
-
-        System.out.print("\nEnter your choice here: ");
-
-        String view_schedule_value = view_schedule.nextLine();
-        switch(view_schedule_value)
-        {
-            case "1":
-                mechanicOptions();
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                viewScedule();
-                break;
-        }
-    }
-
-    public void requestTimeOff()
-    {
-        Scanner request_time_off = new Scanner(System.in);
-
-        System.out.print("\nTime Slots when Mechanic wants off: ");
-        String mechanic_time_off = request_time_off.nextLine();
-        System.out.println();
-
-        System.out.println("1.  Send the Request");
-        String send_the_request = request_time_off.nextLine();
-        System.out.println("2.  Go Back");
-
-        System.out.print("\nEnter your choice here: ");
-
-        String request_time_off_value = request_time_off.nextLine();
-        switch(request_time_off_value)
-        {
-            case "1":
-                break;
-            case "2":
-                mechanicOptions();
-                break;    
-            default:
-                System.out.println("\n\nInvalid Input");
-                requestTimeOff();
-                break;
-        }
-    }
-
-    public void requestSwap()
-    {
-        Scanner request_swap = new Scanner(System.in);
-
-        System.out.print("\nTimeSlot range to swap: ");
-        String time_slot_swap = request_swap.nextLine();
-        System.out.print("\nEmployee ID of Mechanic that is requested for swap: ");
-        String mechanic_requested_swap = request_swap.nextLine();
-        System.out.print("\nTimeSlot range of the requested mechanic that is interested: ");
-        String interested_mechanic = request_swap.nextLine();
-        System.out.println();
-
-        System.out.println("1.  Send the Request");
-        String send_the_request = request_swap.nextLine();
-        System.out.println("2.  Go Back");
-
-        System.out.print("\nEnter your choice here: ");
-
-        String request_swap_value = request_swap.nextLine();
-        switch(request_swap_value)
-        {
-            case "1":
-                break;
-            case "2":
-                mechanicOptions();
-                break;    
-            default:
-                System.out.println("\n\nInvalid Input");
-                requestSwap();
-                break;
-        }
-    }
-
-    public void AcceptRejectSwap()
-    {
-        Scanner accept_reject_swap = new Scanner(System.in);
-
-        System.out.print("\nRequest ID: ");
-        String request_id = accept_reject_swap.nextLine();
-        System.out.print("\nRequestinf Mechanic's Name: ");
-        String requesting_mechanic_name = accept_reject_swap.nextLine();
-        System.out.print("\nTimeSlot range requested: ");
-        String timeslot_range_requested = accept_reject_swap.nextLine();
-        System.out.println();
-
-        System.out.println("1.  Manage Swap Request");
-        String manage_swap_request = accept_reject_swap.nextLine();
-        System.out.println("2.  Go Back");
-
-        System.out.print("\nEnter your choice here: ");
-
-        String accept_reject_swap_value = accept_reject_swap.nextLine();
-        switch(accept_reject_swap_value)
-        {
-            case "1":
-                manageSwapRequest();
-                break;
-            case "2":
-                mechanicOptions();
-                break;    
-            default:
-                System.out.println("\n\nInvalid Input");
-                AcceptRejectSwap();
-                break;
-        }
-    }
-
-    public void manageSwapRequest()
-    {
-        Scanner manage_swap_request = new Scanner(System.in);
-
-        System.out.print("\nRequest ID: ");
-        String request_id = manage_swap_request.nextLine();
-        System.out.println();
-
-        System.out.println("1.  Accept Swap");
-        String accept_swap = manage_swap_request.nextLine();
-        System.out.println("2.  Reject Swap");
-        String reject_swap = manage_swap_request.nextLine();
-        System.out.println("3.  Go Back");
-
-        System.out.print("\nEnter your choice here: ");
-
-        String accept_reject_swap_value = manage_swap_request.nextLine();
-        switch(accept_reject_swap_value)
-        {
-            case "1":
-                break;
-            case "2":
-                break;
-            case "3":
-                mechanicOptions();
-                break;    
-            default:
-                System.out.println("\n\nInvalid Input");
-                manageSwapRequest();
                 break;
         }
     }
