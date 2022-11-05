@@ -726,34 +726,64 @@ class Customer
         switch(customer_invoice_input_value)
         {
             case "1":
-                System.out.println("Enter invoice id: ");
-
-                String invoice_id = "";
-                 home.customerScheduleMaintenance();
+                 customerViewInvoice();
                 break;
             case "2":
-                home.customerScheduleRepair();
+                //home.customerScheduleRepair();
                 break;
             case "3":
-                home.customerViewCart();
+                //home.customerViewCart();
                 break;   
-            case "4":
-                home.viewScheduleService();
-                break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleService();
+                customerOptions();
+                break;
+        }
+    }
+
+    public void customerViewInvoice()
+    {
+        System.out.println("Enter invoice id: ");
+        Scanner customer_invoice_id_input = new Scanner(System.in);
+        String invoice_id = customer_schedule_service_input.nextLine();
+
+        System.out.println("\n1.  View Invoice ");
+        System.out.println("2.  Go Back ");
+        System.out.print("\nEnter your choice here: ");
+
+        Scanner customer_invoice_id_input2 = new Scanner(System.in);
+        String customer_invoice_input_value2 = customer_invoice_id_input2.nextLine();
+
+        switch(customer_invoice_input_value2)
+        {
+            case "1":
+                // A. Invoice ID
+                // B. Customer ID
+                // C. VIN
+                // D. Service Date
+                // E. Service(s) IDs
+                // F. Service(s)
+                // Type(s)
+                // G. Invoice Status
+                // (paid/unpaid)
+                // H. Mechanic’s
+                // name
+                // I. Cost for each
+                // service
+                // J. Total Cost
+                break;
+            case "2":
+                customerInvoices();
+                break; 
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerInvoices();
                 break;
         }
     }
 
 
 }
-
-
-
-
-
 
 
 class Receptionist
