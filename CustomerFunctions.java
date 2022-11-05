@@ -281,3 +281,47 @@ class CustomerScheduleService
         }
     }
 }
+
+class CustomerScheduleMaintenance
+{
+    public void customerScheduleMaintenance()
+    {
+        Home home = new Home();
+
+        System.out.println("\n1.  These are the list of services you are eligible for:");
+        //--Display a message with the service schedule the customer is eligible for (A, B, or C) and the cost.
+
+        Scanner customer_schedule_maintenance_input = new Scanner(System.in);
+
+        System.out.println("\n1.  A");
+        System.out.println("2.  B");
+        System.out.println("2.  C");
+        System.out.println("D.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_schedule_maintenance_input_value = customer_schedule_maintenance_input.nextLine();
+
+        switch(customer_schedule_maintenance_input_value)
+        {
+            case "A":
+                // home.customerOptions();
+                break;
+            case "B":
+               // home.customerOptions();
+                break;
+            case "C":
+               // home.customerOptions();
+                break;    
+            case "D":
+                home.customerScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerScheduleMaintenance();
+                break;
+        }
+    }
+}
+
+
+
