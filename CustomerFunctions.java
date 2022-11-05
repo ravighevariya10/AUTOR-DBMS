@@ -269,7 +269,7 @@ class CustomerScheduleService
                 home.customerScheduleMaintenance();
                 break;
             case "2":
-               // home.customerOptions();
+                home.customerScheduleRepair();
                 break;
             case "3":
                 home.viewScheduleService();
