@@ -266,7 +266,7 @@ class CustomerScheduleService
         switch(customer_schedule_service_input2_value)
         {
             case "1":
-                // home.customerOptions();
+                home.customerScheduleMaintenance();
                 break;
             case "2":
                // home.customerOptions();
