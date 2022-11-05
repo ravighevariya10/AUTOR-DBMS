@@ -1045,6 +1045,10 @@ class Manager
         switch(manager_setup_operational_hours_input_value)
         {
             case "1":
+                if(operational_days.equalsIgnoreCase("Yes")
+                   System.out.println("System Updated.");
+                else
+                   System.out.println("System Updated.");
                 break;
             case "2":
                 managerSetUpStore();
