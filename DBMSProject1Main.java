@@ -537,7 +537,7 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
@@ -569,11 +569,11 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
         }
     }
@@ -602,11 +602,11 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
         }
     }
@@ -635,11 +635,11 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
         }
     }
@@ -668,11 +668,11 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
         }
     }
@@ -696,11 +696,11 @@ class Customer
                 // Add to cart
                 break;
             case "2":
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                csr.customerScheduleRepair();
+                customerScheduleRepair();
                 break;
         }
     }
@@ -745,7 +745,7 @@ class Customer
     {
         System.out.println("Enter invoice id: ");
         Scanner customer_invoice_id_input = new Scanner(System.in);
-        String invoice_id = customer_schedule_service_input.nextLine();
+        String invoice_id = customer_invoice_id_input.nextLine();
 
         System.out.println("\n1.  View Invoice ");
         System.out.println("2.  Go Back ");
@@ -771,6 +771,33 @@ class Customer
                 // I. Cost for each
                 // service
                 // J. Total Cost
+                break;
+            case "2":
+                customerInvoices();
+                break; 
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerInvoices();
+                break;
+        }
+    }
+    public void customerPayInvoice()
+    {
+        System.out.println("Enter invoice id: ");
+        Scanner customer_invoice_id_input_3 = new Scanner(System.in);
+        String invoice_id_value = customer_invoice_id_input_3.nextLine();
+
+        System.out.println("\n1.  Pay Invoice ");
+        System.out.println("2.  Go Back ");
+        System.out.print("\nEnter your choice here: ");
+
+        Scanner customer_invoice_id_input4 = new Scanner(System.in);
+        String customer_invoice_input_value4 = customer_invoice_id_input4.nextLine();
+
+        switch(customer_invoice_input_value4)
+        {
+            case "1":
+                //pay
                 break;
             case "2":
                 customerInvoices();
