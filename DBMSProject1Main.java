@@ -227,8 +227,10 @@ class Manager
         switch(manager_input_value)
         {
             case "1":
+                managerSetUpStore();
                 break;
             case "2":
+                managerAddNewEmployees();
                 break;
             case "3":
                 System.out.println("\nYou are logged out.");
@@ -240,6 +242,255 @@ class Manager
                 break;
         }
     }
+
+    public void managerSetUpStore()
+    {
+        Scanner manager_setup_store_input = new Scanner(System.in);
+
+        System.out.println("\n1.  Add employees");
+        System.out.println("2.  Setup operational hours");
+        System.out.println("3.  Setup service prices");
+        System.out.println("4.  Go back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String manager_setup_store_input_value = manager_setup_store_input.nextLine();
+        switch(manager_setup_store_input_value)
+        {
+            case "1":
+                managerAddEmployees();
+                break;
+            case "2":
+                managerSetupOperationalHours();
+                break;
+            case "3":
+                managerSetupServicePrices();
+                break;
+            case "4":
+                managerOptions();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                managerSetUpStore();
+                break;
+        }
+    }
+    
+    public void managerAddEmployees()
+    {
+        Scanner manager_add_employees_input = new Scanner(System.in);
+
+        System.out.print("\nName: ");
+        String name = manager_add_employees_input.nextLine();
+        System.out.print("Address: ");
+        String address = manager_add_employees_input.nextLine();
+        System.out.print("Email Address: ");
+        String email_address = manager_add_employees_input.nextLine();
+        System.out.print("Phone Number: ");
+        String phone_number = manager_add_employees_input.nextLine();
+        System.out.print("Role: ");
+        String role = manager_add_employees_input.nextLine();
+        System.out.print("Start Date: ");
+        String start_date = manager_add_employees_input.nextLine();
+        System.out.print("Compensation: ");
+        String compensation = manager_add_employees_input.nextLine();
+        System.out.println();
+
+        System.out.println("\n1.  Add");
+        System.out.println("2.  Go back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String manager_add_employees_input_value = manager_add_employees_input.nextLine();
+        switch(manager_add_employees_input_value)
+        {
+            case "1":
+                break;
+            case "2":
+                managerSetUpStore();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                managerAddEmployees();
+                break;
+        }
+    }
+
+    public void managerSetupOperationalHours()
+    {
+        Scanner manager_setup_operational_hours_input = new Scanner(System.in);
+
+        System.out.print("\nOperational on Saturdays?: ");
+        String operational_days = manager_setup_operational_hours_input.nextLine();
+        System.out.println();
+
+        System.out.println("\n1.  Add");
+        System.out.println("2.  Go back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String manager_setup_operational_hours_input_value = manager_setup_operational_hours_input.nextLine();
+        switch(manager_setup_operational_hours_input_value)
+        {
+            case "1":
+                break;
+            case "2":
+                managerSetUpStore();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                managerSetupOperationalHours();
+                break;
+        }
+    }
+
+    public void managerSetupServicePrices()
+    {
+        Scanner manager_setup_service_prices_input = new Scanner(System.in);
+
+        System.out.println("\n1.  Setup maintenance service prices");
+        System.out.println("2.  Setup repair service prices");
+        System.out.println("3.  Go back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String manager_setup_service_prices_input_value = manager_setup_service_prices_input.nextLine();
+        switch(manager_setup_service_prices_input_value)
+        {
+            case "1":
+                managerSetupMaintenanceServicePrices();
+                break;
+            case "2":
+                managerSetupRepairServicePrices();
+                break;
+            case "3":
+                managerSetUpStore();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                managerSetupServicePrices();
+                break;
+        }
+    }
+
+    public void managerSetupMaintenanceServicePrices()
+    {
+        Scanner manager_setup_maintenance_service_prices_input = new Scanner(System.in);
+
+        System.out.print("\nSchedule A price: ");
+        String schedule_a_price = manager_setup_maintenance_service_prices_input.nextLine();
+        System.out.print("Schedule B price: ");
+        String schedule_b_price = manager_setup_maintenance_service_prices_input.nextLine();
+        System.out.print("Schedule C price: ");
+        String schedule_c_price = manager_setup_maintenance_service_prices_input.nextLine();
+        System.out.println();
+
+        System.out.println("\n1.  Setup Prices");
+        System.out.println("2.  Go back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String manager_setup_maintenance_service_prices_input_value = manager_setup_maintenance_service_prices_input.nextLine();
+        switch(manager_setup_maintenance_service_prices_input_value)
+        {
+            case "1":
+                break;
+            case "2":
+                managerSetupServicePrices();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                managerSetupMaintenanceServicePrices();
+                break;
+        }
+    }
+
+    public void managerSetupRepairServicePrices()
+    {
+        Scanner manager_setup_repair_service_prices_input = new Scanner(System.in);
+
+        System.out.print("\nBelt Replacement Price: ");
+        String belt_replacement_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.print("Engine Repair Price: ");
+        String engine_repair_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.print("Catalytic Converter Price: ");
+        String catalytic_converter_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.print("Muffler Repair Price: ");
+        String muffler_repair_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.print("Power Lock Repair Price: ");
+        String power_lock_repair_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.print("Axle Repair Price: ");
+        String axle_repair_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.print("Transmission Flush Repair Price: ");
+        String transmission_flush_repair_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.print("Tire Balancing Price: ");
+        String tire_balancing_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.print("Wheel Alignment Price: ");
+        String wheel_alignment_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.print("Compressor Repair Price: ");
+        String compressor_repair_price = manager_setup_repair_service_prices_input.nextLine();
+        System.out.println();
+
+        System.out.println("\n1.  Setup Prices");
+        System.out.println("2.  Go back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String manager_setup_repair_service_prices_input_value = manager_setup_repair_service_prices_input.nextLine();
+        switch(manager_setup_repair_service_prices_input_value)
+        {
+            case "1":
+                break;
+            case "2":
+                managerSetupServicePrices();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                managerSetupRepairServicePrices();
+                break;
+        }
+    }
+
+    public void managerAddNewEmployees()
+    {
+        Scanner manager_add_new_employees_input = new Scanner(System.in);
+
+        System.out.print("\nName: ");
+        String name = manager_add_new_employees_input.nextLine();
+        System.out.print("Address: ");
+        String address = manager_add_new_employees_input.nextLine();
+        System.out.print("Email Address: ");
+        String email_address = manager_add_new_employees_input.nextLine();
+        System.out.print("Phone Number: ");
+        String phone_number = manager_add_new_employees_input.nextLine();
+        System.out.print("Role: ");
+        String role = manager_add_new_employees_input.nextLine();
+        System.out.print("Start Date: ");
+        String start_date = manager_add_new_employees_input.nextLine();
+        System.out.print("Compensation: ");
+        String compensation = manager_add_new_employees_input.nextLine();
+        System.out.println();
+
+        System.out.println("\n1.  Add");
+        System.out.println("2.  Go back");
+
+        System.out.print("\nEnter your choice here: ");
+
+        String manager_add_new_employees_input_value = manager_add_new_employees_input.nextLine();
+        switch(manager_add_new_employees_input_value)
+        {
+            case "1":
+                break;
+            case "2":
+                managerOptions();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                managerAddNewEmployees();
+                break;
+        }
+    }
+
 }
 
 class Mechanic
