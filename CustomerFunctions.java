@@ -323,5 +323,53 @@ class CustomerScheduleMaintenance
     }
 }
 
+class CustomerScheduleRepair
+{
+    public void customerScheduleRepair()
+    {
+        Home home = new Home();
+        Scanner customer_schedule_repair_input = new Scanner(System.in);
+
+        System.out.println("\n1.  Engine Services");
+        System.out.println("2.  Exhaust Services");
+        System.out.println("3.  Electrical Services");
+        System.out.println("4.  Transmission Services");
+        System.out.println("5.  Tire Services");
+        System.out.println("6.  Heating and AC Services");
+        System.out.println("7.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_schedule_service_input2_value = customer_schedule_service_input2.nextLine();
+
+        switch(customer_schedule_service_input2_value)
+        {
+            case "1":
+                 //home.customerScheduleMaintenance();
+                break;
+            case "2":
+               // home.customerOptions();
+                break;
+            case "3":
+                //home.customerScheduleService();
+                break;
+            case "4":
+                //home.customerScheduleService();
+                break;
+            case "5":
+                //home.customerScheduleService();
+                break;
+            case "6":
+                //home.customerScheduleService();
+                break;
+            case "7":
+                //home.customerScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerScheduleRepair();
+                break;
+        }
+    }
+}
 
 
