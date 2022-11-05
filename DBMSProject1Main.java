@@ -458,25 +458,25 @@ class Customer
         switch(customer_schedule_repair_input_value)
         {
             case "1":
-                 //home.customerScheduleMaintenance();
+                 customerEngineServices();
                 break;
             case "2":
-               // home.customerOptions();
+                customerExhaustServices();
                 break;
             case "3":
-                //home.customerScheduleService();
+                customerElectricalServices();
                 break;
             case "4":
-                //home.customerScheduleService();
+                customerTransmissionServices();
                 break;
             case "5":
-                //home.customerScheduleService();
+                customerTireServices();
                 break;
             case "6":
-                //home.customerScheduleService();
+                customerHeatingACServices();
                 break;
             case "7":
-                //home.customerScheduleService();
+                customerScheduleService();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
@@ -512,7 +512,249 @@ class Customer
                 break;
         }
     }
+
+    public void customerEngineServices()
+    {
+ 
+        System.out.println("For 'Engine Services', these are the services available");
+        System.out.println("\n1. Belt Replacement");
+        System.out.println("2. Engine Repair");
+        System.out.println("3. Go Back");
+
+        Scanner customer_engine_services_input = new Scanner(System.in);
+        System.out.println("Enter your choice here: ");
+
+        String customer_engine_services_input_value = customer_engine_services_input.nextLine();
+
+        switch(customer_engine_services_input_value)
+        {
+            case "1":
+                System.out.println("You've selected Belt Replacement. Added to cart. ");
+                // Add to cart
+                break;
+            case "2":
+                System.out.println("You've selected Engine Repair. Added to cart. ");
+                // Add to cart
+                break;
+            case "3":
+                csr.customerScheduleRepair();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerEngineServices();
+                break;
+        }
+    }
+    public void customerExhaustServices()
+    {
+ 
+        System.out.println("For 'Exhaust Services', these are the services available");
+        System.out.println("\n1. Catalytic Converter Repair");
+        System.out.println("2. Muffler Repair");
+        System.out.println("3. Go Back");
+
+        Scanner customer_exhaust_services_input = new Scanner(System.in);
+        System.out.println("Enter your choice here: ");
+
+        String customer_exhaust_services_input_value = customer_exhaust_services_input.nextLine();
+
+        switch(customer_exhaust_services_input_value)
+        {
+            case "1":
+                System.out.println("You've selected Catalytic Converter Repair. Added to cart. ");
+                // Add to cart
+                break;
+            case "2":
+                System.out.println("You've selected Muffler Repair. Added to cart. ");
+                // Add to cart
+                break;
+            case "3":
+                csr.customerScheduleRepair();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                csr.customerScheduleRepair();
+                break;
+        }
+    }
+
+    public void customerElectricalServices()
+    {
+ 
+        System.out.println("For 'Electrical Services', these are the services available");
+        System.out.println("\n1. Alternator Repair");
+        System.out.println("2. Power Lock Repair");
+        System.out.println("3. Go Back");
+
+        Scanner customer_electrical_services_input = new Scanner(System.in);
+        System.out.println("Enter your choice here: ");
+
+        String customer_electrical_services_input_value = customer_electrical_services_input.nextLine();
+
+        switch(customer_electrical_services_input_value)
+        {
+            case "1":
+                System.out.println("You've selected Alternator Repair. Added to cart. ");
+                // Add to cart
+                break;
+            case "2":
+                System.out.println("You've selected Power Lock Repair. Added to cart. ");
+                // Add to cart
+                break;
+            case "3":
+                csr.customerScheduleRepair();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                csr.customerScheduleRepair();
+                break;
+        }
+    }
+
+    public void customerTransmissionServices()
+    {
+ 
+        System.out.println("For 'Transmission Services', these are the services available");
+        System.out.println("\n1. Axle Repair");
+        System.out.println("2. Transmission Flush");
+        System.out.println("3. Go Back");
+
+        Scanner customer_transmission_services_input = new Scanner(System.in);
+        System.out.println("Enter your choice here: ");
+
+        String customer_transmission_services_input_value = customer_transmission_services_input.nextLine();
+
+        switch(customer_transmission_services_input_value)
+        {
+            case "1":
+                System.out.println("You've selected Axle Repair. Added to cart. ");
+                // Add to cart
+                break;
+            case "2":
+                System.out.println("You've selected Transmission Flush. Added to cart. ");
+                // Add to cart
+                break;
+            case "3":
+                csr.customerScheduleRepair();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                csr.customerScheduleRepair();
+                break;
+        }
+    }
+
+    public void customerTireServices()
+    {
+ 
+        System.out.println("For 'Tire Services', these are the services available");
+        System.out.println("\n1. Tire Balancing");
+        System.out.println("2. Wheel Alignment");
+        System.out.println("3. Go Back");
+
+        Scanner customer_tire_services_input = new Scanner(System.in);
+        System.out.println("Enter your choice here: ");
+
+        String customer_tire_services_input_value = customer_tire_services_input.nextLine();
+
+        switch(customer_tire_services_input_value)
+        {
+            case "1":
+                System.out.println("You've selected Tire Balancing. Added to cart. ");
+                // Add to cart
+                break;
+            case "2":
+                System.out.println("You've selected Wheel Alignment. Added to cart. ");
+                // Add to cart
+                break;
+            case "3":
+                csr.customerScheduleRepair();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                csr.customerScheduleRepair();
+                break;
+        }
+    }
+
+    public void customerHeatingACServices()
+    {
+ 
+        System.out.println("For 'Heating and AC Services', these are the services available");
+        System.out.println("\n1. Compressor Repair");
+        System.out.println("2. Go Back");
+
+        Scanner customer_heating_services_input = new Scanner(System.in);
+        System.out.println("Enter your choice here: ");
+
+        String customer_heating_services_input_value = customer_heating_services_input.nextLine();
+
+        switch(customer_heating_services_input_value)
+        {
+            case "1":
+                System.out.println("You've selected Compressor Repair. Added to cart. ");
+                // Add to cart
+                break;
+            case "2":
+                csr.customerScheduleRepair();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                csr.customerScheduleRepair();
+                break;
+        }
+    }
+
+    public void customerScheduleServicesCart()
+    {
+      //Display possible service times that accommodate all services in the cart within 30 days.
+
+    }
+
+    public void customerInvoices()
+    {
+        //Display the list of customer’s invoices
+        Scanner customer_invoice_input = new Scanner(System.in);
+
+        System.out.println("\n1.  View Invoice Details");
+        System.out.println("2.  Pay Invoice");
+        System.out.println("3.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_invoice_input_value = customer_invoice_input.nextLine();
+
+        switch(customer_invoice_input_value)
+        {
+            case "1":
+                System.out.println("Enter invoice id: ");
+
+                String invoice_id = "";
+                 home.customerScheduleMaintenance();
+                break;
+            case "2":
+                home.customerScheduleRepair();
+                break;
+            case "3":
+                home.customerViewCart();
+                break;   
+            case "4":
+                home.viewScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerScheduleService();
+                break;
+        }
+    }
+
+
 }
+
+
+
+
+
+
 
 class Receptionist
 {
