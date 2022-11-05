@@ -257,8 +257,8 @@ class CustomerScheduleService
 
         System.out.println("\n1.  Add Schedule Maintenance");
         System.out.println("2.  Add Schedule Repair");
-        System.out.println("2.  View Cart and select Schedule Time");
-        System.out.println("3.  Go Back");
+        System.out.println("3.  View Cart and select Schedule Time");
+        System.out.println("4.  Go Back");
         System.out.print("\nEnter your choice here: ");
 
         String customer_schedule_service_input2_value = customer_schedule_service_input2.nextLine();
@@ -266,12 +266,15 @@ class CustomerScheduleService
         switch(customer_schedule_service_input2_value)
         {
             case "1":
-                home.customerScheduleMaintenance();
+                 home.customerScheduleMaintenance();
                 break;
             case "2":
                 home.customerScheduleRepair();
                 break;
             case "3":
+                home.customerViewCart();
+                break;   
+            case "4":
                 home.viewScheduleService();
                 break;
             default:
@@ -372,4 +375,35 @@ class CustomerScheduleRepair
     }
 }
 
+class CustomerViewCart
+{
+    public void customerViewCart()
+    {
+        Home home = new Home();
+ 
+        System.out.println("\n1.  These are the list of services in your cart. Do you wish to proceed to checkout?");
+        //--list of services in cart
 
+        Scanner customer_view_cart_input = new Scanner(System.in);
+
+        System.out.println("\n1.  Proceed with Scheduling");
+        System.out.println("2.  Go Back");
+        System.out.print("\nEnter your choice here: ");
+
+        String customer_view_cart_input_value = customer_view_cart_input.nextLine();
+
+        switch(customer_view_cart_input_value)
+        {
+            case "1":
+                // home.customerOptions();
+                break;
+            case "2":
+                home.customerScheduleService();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                customerViewCart();
+                break;
+        }
+    }
+}
