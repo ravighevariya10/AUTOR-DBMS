@@ -13,13 +13,13 @@ stmt.execute("UPDATE SERVICES_PROVIDED_DETAILS
 SET price = belt_replacement_price
 WHERE s_no = (SELECT DISTINCT s_no
 		FROM SERVICES
-		WHERE s_name = 'Belt Replacement')");
+		WHERE s_name = '"+ 'Belt Replacement' +"')");
 
 stmt.execute("UPDATE SERVICES_PROVIDED_DETAILS
 SET price = engine_repair_price 
 WHERE s_no = (SELECT DISTINCT s_no
 		FROM SERVICES
-		WHERE s_name = 'Engine Repair')");
+		WHERE s_name ='"+ 'Engine Repair' +"')");
 stmt.execute("UPDATE SERVICES_PROVIDED_DETAILS
 SET price = catalytic_converter_price 
 WHERE s_no = (SELECT DISTINCT s_no
