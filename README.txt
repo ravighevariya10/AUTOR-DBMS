@@ -1,3 +1,7 @@
+Instructions on how to compile and execute the code
+  1. Run the .java file.
+  (to be completed...)
+
 Member Names and Unity IDs
   1. Manan Patel (@mrpatel8)
   2. Akruti Sinha (@asinha6)
