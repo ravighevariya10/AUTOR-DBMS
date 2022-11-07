@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 //import javax.swing.SortingFocusTraversalPolicy;
@@ -36,7 +40,6 @@ class JDBC_Helper
         return connection;
     }
 }
-
 
 class Admin
 {
@@ -334,19 +337,33 @@ class Customer
     }
 
     public void customerViewProfile(int c_id, String sc_id) throws SQLException
-    {        
-        System.out.print("\nCustomer ID: ");       
-        System.out.print("First Name: ");      
-        System.out.print("Last Name: ");    
-        System.out.print("Address: ");     
-        System.out.print("Email Address: ");     
-        System.out.print("Phone Number: ");
-        System.out.print("List of all Cars: ");
+    {       
 
-        System.out.println();
-        System.out.println("1.  Go Back");
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
 
-        System.out.print("\nEnter your choice here: ");
+        ResultSet rs = stmt.executeQuery("SELECT DISTINCT C.c_name, C.address, C.email_address, C.phone_number, V.year, V.vin, V.manufacturer, V.current_mileage FROM CUSTOMER C, VEHICLE_OWNED VO, VEHICLE V WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND V.vin = VO.vin");
+        rs.next();
+        System.out.println("\n-----Your Profile Details-----"); 
+        System.out.println("\nID: " + c_id);       
+        System.out.println("Name: " + rs.getString("c_name"));        
+        System.out.println("Address: "+ rs.getString("address"));     
+        System.out.println("Email Address: "+ rs.getString("email_address"));     
+        System.out.println("Phone Number: "+ rs.getInt("phone_number"));
+        //rs.close();
+        System.out.println("\n-----Your Cars-----");
+        int i = 1;
+        while(rs.next())
+        {   
+            System.out.println("Car " + i + ": ");
+            System.out.println("Vehicle ID: " + rs.getString("vin"));  
+            System.out.println("Manufacturer: " + rs.getString("manufacturer"));  
+            System.out.println("Mileage: " + rs.getString("current_mileage"));
+            System.out.println("Year: " + rs.getString("year"));  
+            i++;
+        }
+
+        System.out.println("\n1.  Go Back");
         Scanner customer_view_profile_input = new Scanner(System.in);
 
         String customer_view_profile_input_value = customer_view_profile_input.nextLine();
@@ -365,6 +382,9 @@ class Customer
     public void customerAddNewCar(int c_id, String sc_id) throws SQLException
     {
         Scanner customer_add_car_input = new Scanner(System.in);
+
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
 
         System.out.print("\nVIN number: ");
         String vin_number = customer_add_car_input.nextLine();
@@ -385,6 +405,32 @@ class Customer
         switch(customer_add_car_input_value)
         {
             case "1":
+
+                try{
+
+                    String sql1= "INSERT INTO VEHICLE VALUES ('"+vin_number+"', '"+manufacturer_name+"', '"+mileage+"', '"+year+"')";
+                    stmt.executeQuery(sql1);
+
+                    String sql2= "INSERT INTO VEHICLE_OWNED(vin, sc_id, c_id) VALUES ('"+vin_number+"', '"+sc_id+"', '"+c_id+"')";
+                    stmt.executeQuery(sql2);
+
+                    ResultSet rs =  stmt.executeQuery(sql2);
+
+                    if(rs.next())
+                    {
+                        String sql3= "INSERT INTO MODEL(model_name) VALUES ('"+manufacturer_name+"')";
+                        stmt.executeQuery(sql3);
+                    }
+
+                    System.out.println("---Vehicle Added---");
+                    customerProfile(c_id, sc_id);
+
+                }
+                catch(SQLException e)
+                {
+                    System.out.println("--->FAILED: " + e);
+                }
+
                 break;
             case "2":
                 customerProfile(c_id, sc_id);
@@ -401,25 +447,43 @@ class Customer
 
         Scanner customer_delete_car_input = new Scanner(System.in);
 
-        System.out.print("\nVIN number: ");
-        String vin_number = customer_delete_car_input.nextLine();
-        System.out.print("Car Manufacturer Name: ");
-        String manufacturer_name = customer_delete_car_input.nextLine();
-        System.out.print("Current Mileage: ");
-        String mileage = customer_delete_car_input.nextLine();
-        System.out.print("Year: ");
-        String year = customer_delete_car_input.nextLine();
-        System.out.println();
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT DISTINCT V.vin, V.manufacturer, V.current_mileage, V.year FROM CUSTOMER C, VEHICLE_OWNED VO, VEHICLE V WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND V.vin = VO.vin");
+        System.out.println("\n-----Your Cars-----");
+        ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) FROM CUSTOMER C, VEHICLE_OWNED VO, VEHICLE V WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND V.vin = VO.vin");
+        int i = 1;
+        rs2.next();
+        int[] vin_array = new int[rs2.getInt("COUNT(*)")];
+        rs2.close();
+        while(rs.next())
+        {   
+            System.out.println("Car " + i + ": ");
+            vin_array[i-1] = Integer.parseInt(rs.getString("vin"));
+            System.out.println("Vehicle ID: " + rs.getString("vin"));  
+            System.out.println("Manufacturer: " + rs.getString("manufacturer"));  
+            System.out.println("Mileage: " + rs.getString("current_mileage"));
+            System.out.println("Year: " + rs.getString("year")); 
+            System.out.println("\n"); 
+            i++;
+        }
 
         System.out.println("\n1.  Select the car to delete");
         System.out.println("2.  Go back");
 
         System.out.print("\nEnter your choice here: ");
-
         String admin_add_delete_car_input_value = customer_delete_car_input.nextLine();
+        int delete_vin = vin_array[Integer.parseInt(admin_add_delete_car_input_value)-1];
+
         switch(admin_add_delete_car_input_value)
         {
             case "1":
+                String sql1= "DELETE FROM VEHICLE V WHERE V.vin = SELECT vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE  '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin";
+                stmt.executeQuery(sql1);
+
+                String sql2= "DELETE FROM VEHICLE_OWNED VO WHERE VO.vin = SELECT vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin";
+                stmt.executeQuery(sql2);
                 break;
             case "2":
                 customerProfile(c_id, sc_id);
@@ -430,7 +494,6 @@ class Customer
                 break;
         }
     }
-
     public void viewScheduleService(int c_id, String sc_id) throws SQLException
     {
         Scanner customer_view_schedule_service_input = new Scanner(System.in);
@@ -463,6 +526,10 @@ class Customer
     public void viewServiceHistory(int c_id, String sc_id) throws SQLException
     {
         Scanner customer_view_service_input = new Scanner(System.in);
+
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        
 
         System.out.print("\n1.  Enter VIN Number of Car");
         String vin = customer_view_service_input.nextLine();
@@ -971,8 +1038,17 @@ class Receptionist
     {
         Scanner add_new_customer_profile = new Scanner(System.in);
 
-        System.out.print("\nCustomer Name: ");
-        String customer_name = add_new_customer_profile.nextLine();
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT MAX(c_id) FROM MODEL");
+
+        int cid_counter = rs.getInt("MAX(c_id)") + 1;
+
+        System.out.print("\nFirst Name: ");
+        String c_fname = add_new_customer_profile.nextLine();
+        System.out.print("\nLast Name: ");
+        String c_lname = add_new_customer_profile.nextLine();
         System.out.print("Address: ");
         String address = add_new_customer_profile.nextLine();
         System.out.print("Email Address: ");
@@ -986,6 +1062,19 @@ class Receptionist
         System.out.print("Car Manufacturer: ");
         String car_manufacturer = add_new_customer_profile.nextLine();
         System.out.println();
+
+        try
+        {
+            stmt.execute("insert into CUSTOMER(c_id, c_fname, c_lname, address, email_address, phone_number, username, password, sc_id) values('"+ cid_counter +"', "+ c_fname + "','" + c_lname + "','" + address + "','" + email_address + "','" + phone_number + "','" + username + "','" + c_lname + "', '"+ sc_id +"')");
+            stmt.execute("insert into VEHICLE(vin, manufacturer) values('"+ vin_number + "','" + car_manufacturer + "')");    
+            stmt.execute("insert into VEHICLE_OWNED(vin, sc_id, c_id) values('"+ vin_number + "','" + sc_id + "','" + cid_counter + "')");
+            System.out.println("---Customer Added---");
+            receptionistOptions(receptionist_id, sc_id);
+        }
+        catch(SQLException e)
+        {
+            System.out.println("---> FAILED: " + e);
+        }
 
         System.out.println("1.  Go Back");
 
@@ -1008,6 +1097,9 @@ class Receptionist
     {
         Scanner find_customer_with_pending_invoice = new Scanner(System.in);
 
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+
         System.out.print("\nCustomer ID: ");
         String customer_id = find_customer_with_pending_invoice.nextLine();
         System.out.print("Customer Name: ");
@@ -1019,6 +1111,17 @@ class Receptionist
         System.out.print("Amount: ");
         String amount = find_customer_with_pending_invoice.nextLine();
         System.out.println();
+
+        try
+        {
+            ResultSet rs = stmt.executeQuery("SELECT C.c_id, C.c_name, SE.invoice_id, SE.invoice_date, SE.amount_charged, SE.total_amount_paid, SE.sc_id FROM CUSTOMER C, SERVICE_EVENT SE WHERE C.c_id = SE.c_id AND C.sc_id = SE.sc_id;");
+            System.out.println("---Invoice Details---");
+            receptionistOptions(receptionist_id, sc_id);
+        }
+        catch(SQLException e)
+        {
+            System.out.println("---> FAILED: " + e);
+        }
 
         System.out.println("1.  Go Back");
 
@@ -1110,10 +1213,17 @@ class Manager
     
     public void managerAddEmployees(int manager_id, String sc_id) throws SQLException
     {
+        
         Scanner manager_add_employees_input = new Scanner(System.in);
 
         Connection connection = JDBC_Helper.getConnection();
         Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT MAX(EMP_ID) FROM EMPLOYEE");
+        int emp_counter = 0;
+        rs.next();
+        emp_counter = rs.getInt("MAX(EMP_ID)");
+        rs.close();
 
         System.out.print("\nName: ");
         String name = manager_add_employees_input.nextLine();
@@ -1123,9 +1233,9 @@ class Manager
         String email_address = manager_add_employees_input.nextLine();
         System.out.print("Phone Number: ");
         String phone_number = manager_add_employees_input.nextLine();
-        System.out.print("Role: ");
+        System.out.print("Role:(MECHANIC,RECEPTIONIST) ");
         String role = manager_add_employees_input.nextLine();
-        System.out.print("Start Date: ");
+        System.out.print("Start Date(YYYY/MM/DD): ");
         String start_date = manager_add_employees_input.nextLine();
         System.out.print("Compensation: ");
         String compensation = manager_add_employees_input.nextLine();
@@ -1137,12 +1247,21 @@ class Manager
         System.out.print("\nEnter your choice here: ");
 
         String manager_add_employees_input_value = manager_add_employees_input.nextLine();
-        //String sql1 = "SELLECT SC_ID FROM MANAGER WHERE MANAGER_ID = "
+       
         switch(manager_add_employees_input_value)
         {
             case "1":
-                String sql1 = "INSERT INTO EMPLOYEE (EMP_NAME, EMP_EMAIL, EMP_ADDRESS, EMP_CONTACT, EMP_ROLE, EMP_STARTDATE, EMP_COMPENSATION)VALUES('"+ name + "','" + email_address + "','" + address + "','" + phone_number + "','" + role + " ','" + start_date + "' ,'" + compensation + "');";
-                //stmt.executeQuery(sql1);
+                int emp_id = emp_counter + 1;
+                try{
+                    String sql1 = "INSERT INTO EMPLOYEE (EMP_ID,EMP_NAME,SC_ID, EMP_EMAIL, EMP_ADDRESS, EMP_CONTACT, EMP_ROLE, EMP_STARTDATE, EMP_COMPENSATION)VALUES('"+ emp_id + "','"+ name + "','"+ sc_id +"','"+ email_address +"','"+ address +"','"+ phone_number +"','"+ role +"', TO_DATE('"+start_date+"', 'YYYY/MM/DD'),'"+ compensation +"')";
+                    stmt.executeQuery(sql1);
+                    System.out.println("-----"+ role +" added-----");
+                    managerOptions(manager_id, sc_id);
+                 }
+                catch(SQLException e)
+                {
+                    System.out.println("---> FAILED: " + e);
+                }
                 break;
             case "2":
                 managerSetUpStore(manager_id, sc_id);
@@ -1158,7 +1277,10 @@ class Manager
     {
         Scanner manager_setup_operational_hours_input = new Scanner(System.in);
 
-        System.out.print("\nOperational on Saturdays?: ");
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+
+        System.out.print("\nOperational on Saturdays?:(YES/NO) ");
         String operational_days = manager_setup_operational_hours_input.nextLine();
         System.out.println();
 
@@ -1171,6 +1293,11 @@ class Manager
         switch(manager_setup_operational_hours_input_value)
         {
             case "1":
+            if(operational_days.equals("YES")) stmt.execute("UPDATE SERVICE_CENTER SET OPENING_TIME = '"+ "9:00 AM" + "', CLOSING_TIME = '"+ "1:00 PM" + "', OPEN_ON_SATURDAY = '"+ "Y" + "' WHERE sc_id = '"+ sc_id + "' ");
+            if(operational_days.equals("NO")) stmt.execute("UPDATE SERVICE_CENTER SET OPENING_TIME = '"+ "8:00 AM" + "', CLOSING_TIME = '"+ "8:00 PM" + "', OPEN_ON_SATURDAY = '"+ "N" + "' WHERE sc_id = '"+ sc_id + "' ");
+            else {
+                System.out.println("Invalid input");
+            }
                 break;
             case "2":
                 managerSetUpStore(manager_id, sc_id);
@@ -1295,29 +1422,43 @@ class Manager
     public void managerSetupRepairServicePrices(int manager_id, String sc_id) throws SQLException
     {
         Scanner manager_setup_repair_service_prices_input = new Scanner(System.in);
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
 
-        System.out.print("\nBelt Replacement Price: ");
-        String belt_replacement_price = manager_setup_repair_service_prices_input.nextLine();
-        System.out.print("Engine Repair Price: ");
-        String engine_repair_price = manager_setup_repair_service_prices_input.nextLine();
-        System.out.print("Catalytic Converter Price: ");
-        String catalytic_converter_price = manager_setup_repair_service_prices_input.nextLine();
-        System.out.print("Muffler Repair Price: ");
-        String muffler_repair_price = manager_setup_repair_service_prices_input.nextLine();
-        System.out.print("Power Lock Repair Price: ");
-        String power_lock_repair_price = manager_setup_repair_service_prices_input.nextLine();
-        System.out.print("Axle Repair Price: ");
-        String axle_repair_price = manager_setup_repair_service_prices_input.nextLine();
-        System.out.print("Transmission Flush Repair Price: ");
-        String transmission_flush_repair_price = manager_setup_repair_service_prices_input.nextLine();
-        System.out.print("Tire Balancing Price: ");
-        String tire_balancing_price = manager_setup_repair_service_prices_input.nextLine();
-        System.out.print("Wheel Alignment Price: ");
-        String wheel_alignment_price = manager_setup_repair_service_prices_input.nextLine();
-        System.out.print("Compressor Repair Price: ");
-        String compressor_repair_price = manager_setup_repair_service_prices_input.nextLine();
+        ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) FROM MODEL");
+        rs2.next();
+        int count = rs2.getInt("COUNT(*)");
+        rs2.close();
+
+        ResultSet rs1 = stmt.executeQuery("SELECT MODEL_NAME FROM MODEL");
+        String models[] = new String[count];
+        int i =0;
+        while(rs1.next()){
+            models[i] = rs1.getString("MODEL_NAME");
+            i++;
+        }
+        
+        ResultSet rs = stmt.executeQuery("SELECT SERVICE_NAME FROM REPAIR");
+        
+    
+        Map<Integer, List<String>> repairServices = new HashMap<>();    
+         int l=0;
+         while(rs.next()){
+            for(int k=0; k<models.length; k++){
+                System.out.print("\'"+ rs.getString("service_name")+"'Price for'"+models[k]+"': ");
+                List<String> model_price = new ArrayList<>();
+                model_price.add(rs.getString("service_name"));
+                model_price.add(models[k]);
+                model_price.add(manager_setup_repair_service_prices_input.nextLine());
+                repairServices.put(l,model_price);
+                l++;
+            }
+            
+        }
+        
+        
         System.out.println();
-
+        
         System.out.println("\n1.  Setup Prices");
         System.out.println("2.  Go back");
 
@@ -1326,7 +1467,27 @@ class Manager
         String manager_setup_repair_service_prices_input_value = manager_setup_repair_service_prices_input.nextLine();
         switch(manager_setup_repair_service_prices_input_value)
         {
+            
             case "1":
+            try{
+            for (Map.Entry<Integer, List<String>> entry : repairServices.entrySet()) {
+                List<String> ls = entry.getValue();
+                ResultSet rs3 = stmt.executeQuery("SELECT S_NO FROM REPAIR WHERE SERVICE_NAME='"+ls.get(0)+"'");
+                rs3.next();
+                int s_no = rs3.getInt("s_no");
+                System.out.println(sc_id.toString() + ls.get(1) +  s_no + ls.get(2));
+                rs3.close();
+                stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ ls.get(1) + "', '"+ Integer.parseInt(ls.get(2)) + "','"+ s_no + "')");
+                
+            }
+            System.out.println("---Prices Set Successfully---");
+
+            }catch(SQLException e)
+            {
+                System.out.println("--->FAILED" + e);
+            }
+
+
                 break;
             case "2":
                 managerSetupServicePrices(manager_id, sc_id);
@@ -1342,17 +1503,28 @@ class Manager
     {
         Scanner manager_add_new_employees_input = new Scanner(System.in);
 
+        
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT MAX(EMP_ID) FROM EMPLOYEE");
+        int emp_counter = 0;
+        rs.next();
+        emp_counter = rs.getInt("MAX(EMP_ID)");
+        rs.close();
         System.out.print("\nName: ");
         String name = manager_add_new_employees_input.nextLine();
+        System.out.print("\nLast Name: ");
+        String lastName = manager_add_new_employees_input.nextLine();
         System.out.print("Address: ");
         String address = manager_add_new_employees_input.nextLine();
         System.out.print("Email Address: ");
         String email_address = manager_add_new_employees_input.nextLine();
         System.out.print("Phone Number: ");
         String phone_number = manager_add_new_employees_input.nextLine();
-        System.out.print("Role: ");
+        System.out.print("Role(MECHANIC/RECEPTIONIST): ");
         String role = manager_add_new_employees_input.nextLine();
-        System.out.print("Start Date: ");
+        System.out.print("Start Date(YYYY/MM/DD): ");
         String start_date = manager_add_new_employees_input.nextLine();
         System.out.print("Compensation: ");
         String compensation = manager_add_new_employees_input.nextLine();
@@ -1367,6 +1539,22 @@ class Manager
         switch(manager_add_new_employees_input_value)
         {
             case "1":
+            int emp_id = emp_counter + 1;
+            try{
+                String sql1 = "INSERT INTO EMPLOYEE (EMP_ID,EMP_NAME,SC_ID, EMP_EMAIL, EMP_ADDRESS, EMP_CONTACT, EMP_ROLE, EMP_STARTDATE, EMP_COMPENSATION)VALUES('"+ emp_id + "','"+ name + "','"+ sc_id +"','"+ email_address +"','"+ address +"','"+ phone_number +"','"+ role +"', TO_DATE('"+start_date+"', 'YYYY/MM/DD'),'"+ compensation +"')";
+                stmt.executeQuery(sql1);
+                String username = sc_id+emp_id;
+                String password = lastName;
+                String sql5 = "INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('"+ emp_id + "','"+ sc_id + "', '"+ role + "','"+ username + "','"+ password + "')";
+                stmt.executeQuery(sql5);
+                System.out.println("-----"+ role +" added-----");
+                managerOptions(manager_id, sc_id);
+            }
+            catch(SQLException e)
+            {
+                System.out.println("---> FAILED: " + e);
+            }
+            
                 break;
             case "2":
                 managerOptions(manager_id, sc_id);
