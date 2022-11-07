@@ -1,12 +1,12 @@
 --Manager: :Add Employees
-stmt.execute("INSERT INTO EMPLOYEE (EMP_NAME, EMP_EMAIL, EMP_ADDRESS, EMP_CONTACT, EMP_ROLE, EMP_STARTDATE, EMP_COMPENSATION)VALUES('"+ name + "','"+ email_address +"','"+ address +"','"+ phone_number +"','"+ role +"', '"+ start_date +"','"+ compensation +"')");
+stmt.execute("INSERT INTO EMPLOYEE (EMP_ID,SC_ID,EMP_NAME, EMP_EMAIL, EMP_ADDRESS, EMP_CONTACT, EMP_ROLE, EMP_STARTDATE, EMP_COMPENSATION)VALUES('"+ emp_id + "','"+ name + "','"+ sc_id +"''"+ email_address +"','"+ address +"','"+ phone_number +"','"+ role +"', '"+ start_date +"','"+ compensation +"')");
 
 --Manager: Setup Operational Hours
 --if yes:
-stmt.execute("INSERT INTO SERVICE_CENTER (WORKING_DAYS) VALUES ('"+ "Working on Saturday" +"')");
+stmt.execute("UPDATE SERVICE_CENTER SET OPENING_TIME = '"+ "9:00am" + "', CLOSING_TIME = '"+ "1:00pm" + "', OPEN_ON_SATURDAY = '"+ "Y" + "' WHERE sc_id = '"+ sc_id + "' ");
 
 --else
-stmt.execute("INSERT INTO SERVICE_CENTER (WORKING_DAYS) VALUES ('"+ "Not working on Saturday" +"')");
+stmt.execute("UPDATE SERVICE_CENTER SET OPENING_TIME = '"+ "8:00am" + "', CLOSING_TIME = '"+ "8:00pm" + "', OPEN_ON_SATURDAY = '"+ "N" + "' WHERE sc_id = '"+ sc_id + "' ");
 
 --Manager: Setup Repair Service Prices
 stmt.execute("UPDATE SERVICES_PROVIDED_DETAILS
@@ -75,5 +75,4 @@ stmt.execute("UPDATE MAINTENANCE_PRICES
 SET price = schedule_c_price 
 WHERE schedule_name= 'C'");
 
---Manager: Add New Employees
-stmt.execute("INSERT INTO EMPLOYEE (EMP_NAME, EMP_EMAIL, EMP_ADDRESS, EMP_CONTACT, EMP_ROLE, EMP_STARTDATE, EMP_COMPENSATION)VALUES('"+ name +"', '"+ email_address +"', '"+ address +"', '"+ phone_number +"', '"+ role +"', '"+ start_date +"', '"+ compensation +"')");
+
