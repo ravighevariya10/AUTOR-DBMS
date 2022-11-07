@@ -26,6 +26,17 @@ CREATE TABLE VEHICLE (
   year INTEGER NOT NULL
 );
 
+CREATE TABLE EMPLOYEE_AUTH (
+    emp_id NUMBER(9) NOT NULL,
+    sc_id VARCHAR(20) NOT NULL,
+    emp_role VARCHAR(6) CONSTRAINT role 
+    CHECK (emp_role in('MANAGER','RECEPTIONIST','MECHANIC')),
+    username VARCHAR(20),
+    password VARCHAR(20),
+    PRIMARY KEY(emp_id,sc_id,username),
+    FOREIGN KEY (emp_id,sc_id) REFERENCES EMPLOYEE(emp_id,sc_id) ON DELETE CASCADE
+ );
+
 CREATE TABLE SERVICES_PROVIDED_DETAILS(
     price INTEGER, 
     duration VARCHAR(15),
