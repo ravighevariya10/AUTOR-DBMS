@@ -29,7 +29,7 @@ CREATE TABLE VEHICLE (
 CREATE TABLE EMPLOYEE_AUTH (
     emp_id NUMBER(9) NOT NULL,
     sc_id VARCHAR(20) NOT NULL,
-    emp_role VARCHAR(6) CONSTRAINT role 
+    emp_role VARCHAR(20) CONSTRAINT role 
     CHECK (emp_role in('MANAGER','RECEPTIONIST','MECHANIC')),
     username VARCHAR(20),
     password VARCHAR(20),
