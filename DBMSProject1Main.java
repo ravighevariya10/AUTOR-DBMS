@@ -1216,11 +1216,18 @@ class Manager
         ResultSet rs1 = stmt.executeQuery("SELECT MODEL_NAME FROM MODEL");
         ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) FROM MODEL");
 
-        rs2.next();
-        String schedule_a_price[] = new String[rs2.getInt("COUNT(*)")];
-        String schedule_b_price[] = new String[rs2.getInt("COUNT(*)")];
-        String schedule_c_price[] = new String[rs2.getInt("COUNT(*)")];
-        String model[] = new String[rs2.getInt("COUNT(*)")];
+        
+
+        if(rs2.next()){
+            String schedule_a_price[] = new String[rs2.getInt("COUNT(*)")];
+            String schedule_b_price[] = new String[rs2.getInt("COUNT(*)")];
+            String schedule_c_price[] = new String[rs2.getInt("COUNT(*)")];
+            String model[] = new String[rs2.getInt("COUNT(*)")];
+        
+        }
+            
+        
+        
 
         while(rs1.next()){
             System.out.print("\nSchedule A price for " + rs1.getString("model_name" + ": "));
@@ -1248,17 +1255,23 @@ class Manager
                 for(int m=0; m<schedule_a_price.length; m++){
 
                     ResultSet rs = stmt.executeQuery("SELECT S_NO FROM MAINTENANCE_DURATION WHERE SCHEDULE_NAME = '"+ "A" + "'");
-                    int s_no = rs.getInt("s_no");
+                    if(rs.next()){
+                        int s_no = rs.getInt("s_no");
+                    }
                     stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[i] + "', '"+ schedule_a_price[i] + "','"+ s_no + "')");
                 }
                 for(int j=0; j<schedule_b_price.length; j++){
                     ResultSet rs = stmt.executeQuery("SELECT S_NO FROM MAINTENANCE_DURATION WHERE SCHEDULE_NAME = '"+ "B" + "'");
-                    int s_no = rs.getInt("s_no");
+                    if(rs.next()){
+                        int s_no = rs.getInt("s_no");
+                    }
                     stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[i] + "', '"+ schedule_b_price[i] + "','"+ s_no + "')");
                 }
                 for(int k=0; k<schedule_c_price.length; k++){
                     ResultSet rs = stmt.executeQuery("SELECT S_NO FROM MAINTENANCE_DURATION WHERE SCHEDULE_NAME = '"+ "C" + "'");
-                    int s_no = rs.getInt("s_no");
+                    if(rs.next()){
+                        int s_no = rs.getInt("s_no");
+                    }
                     stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[i] + "', '"+ schedule_c_price[i] + "','"+ s_no + "')");
                 }
                 break;
