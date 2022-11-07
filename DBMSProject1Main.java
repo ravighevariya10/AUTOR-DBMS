@@ -1,11 +1,52 @@
 import java.util.Scanner;
 
+import javax.swing.SortingFocusTraversalPolicy;
+
+import java.sql.*;
+
+
+
+class JDBC_Helper 
+{
+
+    private static Connection connection;
+   static final String jdbcURL 
+	= "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl01";
+
+
+   static
+   {
+      try
+      {
+        
+         Class.forName("oracle.jdbc.OracleDriver");
+      }
+      catch ( ClassNotFoundException e )
+      {
+         System.out.println( "Driver class not found" );
+      }
+   }
+
+   public static Connection getConnection() throws SQLException 
+
+   {
+        String user = "sbhatia6";	
+        String passwd = "200473741";
+        connection = DriverManager.getConnection( jdbcURL, user, passwd );
+        return connection;
+    }
+}
+
+
 class Admin
 {
-    public void adminOptions()
+
+    int service_counter = 200;
+
+    public void adminOptions() throws SQLException
     {
         Home home = new Home();
-        Scanner admin_input = new Scanner(System.in);
+       
 
         System.out.println("\n1.  System Set up");
         System.out.println("2.  Add New Store");
@@ -14,6 +55,7 @@ class Admin
 
         System.out.print("\nEnter your choice here: ");
 
+        Scanner admin_input = new Scanner(System.in);
         String admin_input_value = admin_input.nextLine();
         switch(admin_input_value)
         {
@@ -37,7 +79,7 @@ class Admin
         }
     }
 
-    public void adminSystemSetUpOptions()
+    public void adminSystemSetUpOptions() throws SQLException
     {
         Scanner admin_system_setup_input = new Scanner(System.in);
 
@@ -64,16 +106,20 @@ class Admin
         }
     }
 
-    public void adminAddNewStore()
+    public void adminAddNewStore() throws SQLException
     {
         Scanner admin_add_new_store_input = new Scanner(System.in);
 
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = null;
         System.out.print("\nStore ID: ");
         String store_id = admin_add_new_store_input.nextLine();
         System.out.print("Address: ");
         String address = admin_add_new_store_input.nextLine();
-        System.out.print("First Name: ");
-        String first_name = admin_add_new_store_input.nextLine();
+        System.out.print("Full Name: ");
+        String name = admin_add_new_store_input.nextLine();
         System.out.print("Last Name: ");
         String last_name = admin_add_new_store_input.nextLine();
         System.out.print("Username: ");
@@ -99,6 +145,23 @@ class Admin
         switch(admin_add_new_store_input_value)
         {
             case "1":
+            try
+            {
+                String sql1= "insert into SERVICE_CENTER(sc_id,address,min_wage,max_wage)values('"+ store_id + "','" + address + "','" + min_wage_mechanic + "','" + max_wage_mechanic + "')";
+                stmt.executeQuery(sql1);
+                String sql2= "insert into manager(manager_id,sc_id,m_name,salary,username,password)values('"+ employee_id + "','" + store_id + "','" + name + "','" + salary + "','" + username + " ','" + password + "')";
+                stmt.executeQuery(sql2);
+                String sql3= "insert into employee(emp_id,sc_id,emp_name,salary,emp_address,emp_role)values('"+ employee_id + "','" + store_id + "','" + name + "','" + salary + "','" + address + " ','" + "MANAGER" + "')";
+                stmt.executeQuery(sql3);
+                System.out.println("\n---Store Added---");
+                adminOptions();
+            }
+            catch(SQLException e)
+            {
+                System.out.println("--->FAILED: " + e);
+            }
+            
+            //System.out.println(rs);
                 break;
             case "2":
                 adminOptions();
@@ -110,12 +173,26 @@ class Admin
         }
     }
 
-    public void adminAddNewService()
+    public void adminAddNewService() throws SQLException
     {
         Scanner admin_add_new_service_input = new Scanner(System.in);
 
+        
+
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        ResultSet rs = null;
+
+        System.out.println("\n1.  Engine Services");
+        System.out.println("2.  Exhaust Services");
+        System.out.println("3.  Electrical Services");
+        System.out.println("4.  Transmission Services");
+        System.out.println("5.  Tire Services");
+        System.out.println("6.  Heating and Air Conditioner Services");
         System.out.print("\nEnter existing service category: ");
         String service_category = admin_add_new_service_input.nextLine();
+        //System.out.print("Service ID: ");
+        //String service_id = admin_add_new_service_input.nextLine();
         System.out.print("Service Name: ");
         String service_name = admin_add_new_service_input.nextLine();
         System.out.print("Duration: ");
@@ -131,6 +208,43 @@ class Admin
         switch(admin_add_new_service_input_value)
         {
             case "1":
+            try
+            {
+            //rs = stmt.executeQuery("SELECT s_no from SERVICES");
+            
+            //System.out.println(rs.getInt("s_no"));
+            int s_no = service_counter + 1;
+            service_counter++;
+
+            stmt.execute("insert into SERVICES(s_no,s_name)values('"+ s_no + "','" + service_name + "')");
+            stmt.execute("insert into REPAIR(service_name,s_no,duration)values('"+ service_name + "','" + s_no + "','" + duration + "')");
+            switch (service_category) {
+                case "1": 
+                stmt.execute("insert into ENGINE_SERVICES(s_no)values('"+ s_no + "')");  ;
+                  break;
+                case "2": 
+                stmt.execute("insert into EXHAUST_SERVICES(s_no)values('"+ s_no + "')");  ;
+                break;
+                case "3": 
+                stmt.execute("insert into ELECTRICAL_SERVICES(s_no)values('"+ s_no + "')");  ;
+                break;
+                case "4": 
+                stmt.execute("insert into TRANSMISSION_SERVICES(s_no)values('"+ s_no + "')");  ;
+                break;
+                case "5": 
+                stmt.execute("insert into TIRE_SERVICES(s_no)values('"+ s_no + "')");  ;
+                break;
+                case "6": 
+                stmt.execute("insert into H_AND_AC_SERVICES(s_no)values('"+ s_no + "')");  ;
+                break;
+              }
+              System.out.println("---Service Added---");
+              adminOptions();
+            }
+            catch(SQLException e)
+            {
+                System.out.println("--->FAILED: " + e);
+            }
                 break;
             case "2":
                 adminOptions();
@@ -145,10 +259,11 @@ class Admin
 
 class Customer
 {
-    public void customerOptions()
+    public void customerOptions(int c_id, String sc_id) throws SQLException
     {
         Home home = new Home();
         Scanner customer_input = new Scanner(System.in);
+        //System.out.println("Customer ID: " + c_id + "\nStore ID: " + sc_id);
 
         System.out.println("\n1.  View and Update Profile");
         System.out.println("2.  View and Schedule Service");
@@ -161,10 +276,10 @@ class Customer
         switch(customer_input_value)
         {
             case "1":
-                customerProfile();
+                customerProfile(c_id, sc_id);
                 break;
             case "2":
-                viewScheduleService();
+                viewScheduleService(c_id, sc_id);
                 break;
             case "3":
                 break;
@@ -174,12 +289,12 @@ class Customer
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerOptions();
+                customerOptions(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerProfile()
+    public void customerProfile(int c_id, String sc_id) throws SQLException
     {
         Scanner customer_profile_input = new Scanner(System.in);
 
@@ -194,25 +309,25 @@ class Customer
         switch(customer_profile_input_value)
         {
             case "1":
-                customerViewProfile();
+                customerViewProfile(c_id, sc_id);
                 break;
             case "2":
-                customerAddNewCar();
+                customerAddNewCar(c_id, sc_id);
                 break;
             case "3":
-                customerDeleteCar();
+                customerDeleteCar(c_id, sc_id);
                 break;
             case "4":
-                customerOptions();
+                customerOptions(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerProfile();
+                customerProfile(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerViewProfile()
+    public void customerViewProfile(int c_id, String sc_id) throws SQLException
     {        
         System.out.print("\nCustomer ID: ");       
         System.out.print("First Name: ");      
@@ -232,16 +347,16 @@ class Customer
         switch(customer_view_profile_input_value)
         {
             case "1":
-                customerProfile();
+                customerProfile(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerViewProfile();
+                customerViewProfile(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerAddNewCar()
+    public void customerAddNewCar(int c_id, String sc_id) throws SQLException
     {
         Scanner customer_add_car_input = new Scanner(System.in);
 
@@ -250,9 +365,9 @@ class Customer
         System.out.print("Car Manufacturer Name: ");
         String manufacturer_name = customer_add_car_input.nextLine();
         System.out.print("Current Mileage: ");
-        String mileage = customer_add_car_input.nextLine();
+        int mileage = Integer.parseInt(customer_add_car_input.nextLine());
         System.out.print("Year: ");
-        String year = customer_add_car_input.nextLine();
+        int year = Integer.parseInt(customer_add_car_input.nextLine());
         System.out.println();
 
         System.out.println("1.  Save Information");
@@ -266,16 +381,16 @@ class Customer
             case "1":
                 break;
             case "2":
-                customerProfile();
+                customerProfile(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerAddNewCar();
+                customerAddNewCar(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerDeleteCar()
+    public void customerDeleteCar(int c_id, String sc_id) throws SQLException
     {
 
         Scanner customer_delete_car_input = new Scanner(System.in);
@@ -301,16 +416,16 @@ class Customer
             case "1":
                 break;
             case "2":
-                customerProfile();
+                customerProfile(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerDeleteCar();
+                customerDeleteCar(c_id, sc_id);
                 break;
         }
     }
 
-    public void viewScheduleService()
+    public void viewScheduleService(int c_id, String sc_id) throws SQLException
     {
         Scanner customer_view_schedule_service_input = new Scanner(System.in);
 
@@ -324,22 +439,22 @@ class Customer
         switch(customer_view_schedule_service_input_value)
         {
             case "1":
-                viewServiceHistory();
+                viewServiceHistory(c_id, sc_id);
                 break;
             case "2":
-                customerScheduleService();
+                customerScheduleService(c_id, sc_id);
                 break;
             case "3":
-                customerOptions();
+                customerOptions(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                viewScheduleService();
+                viewScheduleService(c_id, sc_id);
                 break;
         }
     }
 
-    public void viewServiceHistory()
+    public void viewServiceHistory(int c_id, String sc_id) throws SQLException
     {
         Scanner customer_view_service_input = new Scanner(System.in);
 
@@ -357,22 +472,22 @@ class Customer
             case "1":
                 break;
             case "2":
-                viewScheduleService();
+                viewScheduleService(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                viewServiceHistory();
+                viewServiceHistory(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerScheduleService()
+    public void customerScheduleService(int c_id, String sc_id) throws SQLException
     {
         Scanner customer_schedule_service_input = new Scanner(System.in);
 
-        System.out.println("\n1.  Enter VIN Number of Car");
+        System.out.print("\n1.  Enter VIN Number of Car");
         String vin = customer_schedule_service_input.nextLine();
-        System.out.println("\n1.  Enter Current Mileage of Car");
+        System.out.print("\n1.  Enter Current Mileage of Car");
         String mileage = customer_schedule_service_input.nextLine();
         System.out.println();
         System.out.println("\n1.  Add Schedule Maintenance");
@@ -386,25 +501,25 @@ class Customer
         switch(customer_schedule_service_input_value)
         {
             case "1":
-                customerScheduleMaintenance();
+                customerScheduleMaintenance(c_id, sc_id);
                 break;
             case "2":
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
             case "3":
-                customerViewCart();
+                customerViewCart(c_id, sc_id);
                 break;   
             case "4":
-                viewScheduleService();
+                viewScheduleService(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleService();
+                customerScheduleService(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerScheduleMaintenance()
+    public void customerScheduleMaintenance(int c_id, String sc_id) throws SQLException
     {
         System.out.println("\n1.  These are the list of services you are eligible for:");
         //--Display a message with the service schedule the customer is eligible for (A, B, or C) and the cost.
@@ -431,18 +546,19 @@ class Customer
                // home.customerOptions();
                 break;    
             case "D":
-                customerScheduleService();
+                customerScheduleService(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleMaintenance();
+                customerScheduleMaintenance(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerScheduleRepair()
+    public void customerScheduleRepair(int c_id, String sc_id)
     {
         Scanner customer_schedule_repair_input = new Scanner(System.in);
+        //System.out.println("Customer ID: " + c_id + "\nStore ID: " + sc_id);
 
         System.out.println("\n1.  Engine Services");
         System.out.println("2.  Exhaust Services");
@@ -458,34 +574,34 @@ class Customer
         switch(customer_schedule_repair_input_value)
         {
             case "1":
-                 customerEngineServices();
+                 //home.customerScheduleMaintenance();
                 break;
             case "2":
-                customerExhaustServices();
+               // home.customerOptions();
                 break;
             case "3":
-                customerElectricalServices();
+                //home.customerScheduleService();
                 break;
             case "4":
-                customerTransmissionServices();
+                //home.customerScheduleService();
                 break;
             case "5":
-                customerTireServices();
+                //home.customerScheduleService();
                 break;
             case "6":
-                customerHeatingACServices();
+                //home.customerScheduleService();
                 break;
             case "7":
-                customerScheduleService();
+                //home.customerScheduleService();
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerViewCart()
+    public void customerViewCart(int c_id, String sc_id) throws SQLException
     { 
         System.out.println("\n1.  These are the list of services in your cart. Do you wish to proceed to checkout?");
         //--list of services in cart
@@ -504,16 +620,16 @@ class Customer
                 // home.customerOptions();
                 break;
             case "2":
-                customerScheduleService();
+                customerScheduleService(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerViewCart();
+                customerViewCart(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerEngineServices()
+    public void customerEngineServices(int c_id, String sc_id)
     {
  
         System.out.println("For 'Engine Services', these are the services available");
@@ -537,15 +653,15 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerEngineServices();
+                customerEngineServices(c_id, sc_id);
                 break;
         }
     }
-    public void customerExhaustServices()
+    public void customerExhaustServices(int c_id, String sc_id)
     {
  
         System.out.println("For 'Exhaust Services', these are the services available");
@@ -569,16 +685,16 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerElectricalServices()
+    public void customerElectricalServices(int c_id, String sc_id)
     {
  
         System.out.println("For 'Electrical Services', these are the services available");
@@ -602,16 +718,16 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerTransmissionServices()
+    public void customerTransmissionServices(int c_id, String sc_id)
     {
  
         System.out.println("For 'Transmission Services', these are the services available");
@@ -635,16 +751,16 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerTireServices()
+    public void customerTireServices(int c_id, String sc_id)
     {
  
         System.out.println("For 'Tire Services', these are the services available");
@@ -668,16 +784,16 @@ class Customer
                 // Add to cart
                 break;
             case "3":
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerHeatingACServices()
+    public void customerHeatingACServices(int c_id, String sc_id)
     {
  
         System.out.println("For 'Heating and AC Services', these are the services available");
@@ -696,22 +812,22 @@ class Customer
                 // Add to cart
                 break;
             case "2":
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleRepair();
+                customerScheduleRepair(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerScheduleServicesCart()
+    public void customerScheduleServicesCart(int c_id, String sc_id)
     {
       //Display possible service times that accommodate all services in the cart within 30 days.
 
     }
 
-    public void customerInvoices()
+    public void customerInvoices(int c_id, String sc_id) throws SQLException
     {
         //Display the list of customer’s invoices
         Scanner customer_invoice_input = new Scanner(System.in);
@@ -726,7 +842,7 @@ class Customer
         switch(customer_invoice_input_value)
         {
             case "1":
-                 customerViewInvoice();
+                 customerViewInvoice(c_id, sc_id);
                 break;
             case "2":
                 //home.customerScheduleRepair();
@@ -736,12 +852,12 @@ class Customer
                 break;   
             default:
                 System.out.println("\n\nInvalid Input");
-                customerOptions();
+                customerOptions(c_id, sc_id);
                 break;
         }
     }
 
-    public void customerViewInvoice()
+    public void customerViewInvoice(int c_id, String sc_id) throws SQLException
     {
         System.out.println("Enter invoice id: ");
         Scanner customer_invoice_id_input = new Scanner(System.in);
@@ -773,15 +889,15 @@ class Customer
                 // J. Total Cost
                 break;
             case "2":
-                customerInvoices();
+                customerInvoices(c_id, sc_id);
                 break; 
             default:
                 System.out.println("\n\nInvalid Input");
-                customerInvoices();
+                customerInvoices(c_id, sc_id);
                 break;
         }
     }
-    public void customerPayInvoice()
+    public void customerPayInvoice(int c_id, String sc_id) throws SQLException
     {
         System.out.println("Enter invoice id: ");
         Scanner customer_invoice_id_input_3 = new Scanner(System.in);
@@ -800,11 +916,11 @@ class Customer
                 //pay
                 break;
             case "2":
-                customerInvoices();
+                customerInvoices(c_id, sc_id);
                 break; 
             default:
                 System.out.println("\n\nInvalid Input");
-                customerInvoices();
+                customerInvoices(c_id, sc_id);
                 break;
         }
     }
@@ -812,10 +928,9 @@ class Customer
 
 }
 
-
 class Receptionist
 {
-    public void receptionistOptions()
+    public void receptionistOptions() throws SQLException
     {
         Home home = new Home();
         Scanner receptionist_input = new Scanner(System.in);
@@ -846,7 +961,7 @@ class Receptionist
         }
     }
 
-    public void addNewCustomerProfile()
+    public void addNewCustomerProfile() throws SQLException
     {
         Scanner add_new_customer_profile = new Scanner(System.in);
 
@@ -883,7 +998,7 @@ class Receptionist
         }
     }
 
-    public void findCustomerWithPendingInvoice()
+    public void findCustomerWithPendingInvoice() throws SQLException
     {
         Scanner find_customer_with_pending_invoice = new Scanner(System.in);
 
@@ -918,10 +1033,11 @@ class Receptionist
 }
 
 class Manager
-{
-    public void managerOptions()
+{ 
+    public void managerOptions(int manager_id, String sc_id) throws SQLException
     {
         Home home = new Home();
+       
         Scanner manager_input = new Scanner(System.in);
 
         System.out.println("\n1.  Setup Store");
@@ -930,14 +1046,17 @@ class Manager
 
         System.out.print("\nEnter your choice here: ");
 
+
+        //stmt.executeQuery("SELECT M.manger_id,M.sc_id WHERE from MANAGER where username = '"+  + "'")
+
         String manager_input_value = manager_input.nextLine();
         switch(manager_input_value)
         {
             case "1":
-                managerSetUpStore();
+                managerSetUpStore(manager_id, sc_id);
                 break;
             case "2":
-                managerAddNewEmployees();
+                managerAddNewEmployees(manager_id, sc_id);
                 break;
             case "3":
                 System.out.println("\nYou are logged out.");
@@ -945,12 +1064,12 @@ class Manager
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                managerOptions();
+                managerOptions(manager_id, sc_id);
                 break;
         }
     }
 
-    public void managerSetUpStore()
+    public void managerSetUpStore(int manager_id, String sc_id) throws SQLException
     {
         Scanner manager_setup_store_input = new Scanner(System.in);
 
@@ -965,27 +1084,30 @@ class Manager
         switch(manager_setup_store_input_value)
         {
             case "1":
-                managerAddEmployees();
+                managerAddEmployees(manager_id, sc_id);
                 break;
             case "2":
-                managerSetupOperationalHours();
+                managerSetupOperationalHours(manager_id, sc_id);
                 break;
             case "3":
-                managerSetupServicePrices();
+                managerSetupServicePrices(manager_id, sc_id);
                 break;
             case "4":
-                managerOptions();
+                managerOptions(manager_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                managerSetUpStore();
+                managerSetUpStore(manager_id, sc_id);
                 break;
         }
     }
     
-    public void managerAddEmployees()
+    public void managerAddEmployees(int manager_id, String sc_id) throws SQLException
     {
         Scanner manager_add_employees_input = new Scanner(System.in);
+
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
 
         System.out.print("\nName: ");
         String name = manager_add_employees_input.nextLine();
@@ -1009,26 +1131,24 @@ class Manager
         System.out.print("\nEnter your choice here: ");
 
         String manager_add_employees_input_value = manager_add_employees_input.nextLine();
+        //String sql1 = "SELLECT SC_ID FROM MANAGER WHERE MANAGER_ID = "
         switch(manager_add_employees_input_value)
         {
             case "1":
-                if((role.equalsIgnoreCase("receptionist")||(role.equalsIgnoreCase("mechanic")))
-                   //Go for it
-                   System.out.println("Okay");
-                else
-                   System.out.println("You don't have permission to add employees for this role.");
+                String sql1 = "INSERT INTO EMPLOYEE (EMP_NAME, EMP_EMAIL, EMP_ADDRESS, EMP_CONTACT, EMP_ROLE, EMP_STARTDATE, EMP_COMPENSATION)VALUES('"+ name + "','" + email_address + "','" + address + "','" + phone_number + "','" + role + " ','" + start_date + "' ,'" + compensation + "');";
+                //stmt.executeQuery(sql1);
                 break;
             case "2":
-                managerSetUpStore();
+                managerSetUpStore(manager_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                managerAddEmployees();
+                managerAddEmployees(manager_id, sc_id);
                 break;
         }
     }
 
-    public void managerSetupOperationalHours()
+    public void managerSetupOperationalHours(int manager_id, String sc_id) throws SQLException
     {
         Scanner manager_setup_operational_hours_input = new Scanner(System.in);
 
@@ -1045,22 +1165,18 @@ class Manager
         switch(manager_setup_operational_hours_input_value)
         {
             case "1":
-                if(operational_days.equalsIgnoreCase("Yes")
-                   System.out.println("System Updated.");
-                else
-                   System.out.println("System Updated.");
                 break;
             case "2":
-                managerSetUpStore();
+                managerSetUpStore(manager_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                managerSetupOperationalHours();
+                managerSetupOperationalHours(manager_id, sc_id);
                 break;
         }
     }
 
-    public void managerSetupServicePrices()
+    public void managerSetupServicePrices(int manager_id, String sc_id) throws SQLException
     {
         Scanner manager_setup_service_prices_input = new Scanner(System.in);
 
@@ -1074,32 +1190,51 @@ class Manager
         switch(manager_setup_service_prices_input_value)
         {
             case "1":
-                managerSetupMaintenanceServicePrices();
+                managerSetupMaintenanceServicePrices(manager_id, sc_id);
                 break;
             case "2":
-                managerSetupRepairServicePrices();
+                managerSetupRepairServicePrices(manager_id, sc_id);
                 break;
             case "3":
-                managerSetUpStore();
+                managerSetUpStore(manager_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                managerSetupServicePrices();
+                managerSetupServicePrices(manager_id, sc_id);
                 break;
         }
     }
 
-    public void managerSetupMaintenanceServicePrices()
+    public void managerSetupMaintenanceServicePrices(int manager_id, String sc_id) throws SQLException
     {
         Scanner manager_setup_maintenance_service_prices_input = new Scanner(System.in);
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        int i = 0;
 
-        System.out.print("\nSchedule A price: ");
-        String schedule_a_price = manager_setup_maintenance_service_prices_input.nextLine();
-        System.out.print("Schedule B price: ");
-        String schedule_b_price = manager_setup_maintenance_service_prices_input.nextLine();
-        System.out.print("Schedule C price: ");
-        String schedule_c_price = manager_setup_maintenance_service_prices_input.nextLine();
-        System.out.println();
+        
+        ResultSet rs1 = stmt.executeQuery("SELECT MODEL_NAME FROM MODEL");
+        ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) FROM MODEL");
+
+        rs2.next();
+        String schedule_a_price[] = new String[rs2.getInt("COUNT(*)")];
+        String schedule_b_price[] = new String[rs2.getInt("COUNT(*)")];
+        String schedule_c_price[] = new String[rs2.getInt("COUNT(*)")];
+        String model[] = new String[rs2.getInt("COUNT(*)")];
+
+        while(rs1.next()){
+            System.out.print("\nSchedule A price for " + rs1.getString("model_name" + ": "));
+            schedule_a_price[i] = manager_setup_maintenance_service_prices_input.nextLine();
+            System.out.print("\n");
+            System.out.print("\nSchedule B price for " + rs1.getString("model_name" + ": "));
+            schedule_b_price[i] = manager_setup_maintenance_service_prices_input.nextLine();
+            System.out.print("\n");
+            System.out.print("\nSchedule C price for " + rs1.getString("model_name" + ": "));
+            schedule_c_price[i] = manager_setup_maintenance_service_prices_input.nextLine();
+            System.out.print("\n");
+            model[i] = rs1.getString("model_name" + ": ");
+            i++;
+        }
 
         System.out.println("\n1.  Setup Prices");
         System.out.println("2.  Go back");
@@ -1110,18 +1245,34 @@ class Manager
         switch(manager_setup_maintenance_service_prices_input_value)
         {
             case "1":
+                for(int m=0; m<schedule_a_price.length; m++){
+
+                    ResultSet rs = stmt.executeQuery("SELECT S_NO FROM MAINTENANCE_DURATION WHERE SCHEDULE_NAME = '"+ "A" + "'");
+                    int s_no = rs.getInt("s_no");
+                    stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[i] + "', '"+ schedule_a_price[i] + "','"+ s_no + "')");
+                }
+                for(int j=0; j<schedule_b_price.length; j++){
+                    ResultSet rs = stmt.executeQuery("SELECT S_NO FROM MAINTENANCE_DURATION WHERE SCHEDULE_NAME = '"+ "B" + "'");
+                    int s_no = rs.getInt("s_no");
+                    stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[i] + "', '"+ schedule_b_price[i] + "','"+ s_no + "')");
+                }
+                for(int k=0; k<schedule_c_price.length; k++){
+                    ResultSet rs = stmt.executeQuery("SELECT S_NO FROM MAINTENANCE_DURATION WHERE SCHEDULE_NAME = '"+ "C" + "'");
+                    int s_no = rs.getInt("s_no");
+                    stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[i] + "', '"+ schedule_c_price[i] + "','"+ s_no + "')");
+                }
                 break;
             case "2":
-                managerSetupServicePrices();
+                managerSetupServicePrices(manager_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                managerSetupMaintenanceServicePrices();
+                managerSetupMaintenanceServicePrices(manager_id, sc_id);
                 break;
         }
     }
 
-    public void managerSetupRepairServicePrices()
+    public void managerSetupRepairServicePrices(int manager_id, String sc_id) throws SQLException
     {
         Scanner manager_setup_repair_service_prices_input = new Scanner(System.in);
 
@@ -1158,16 +1309,16 @@ class Manager
             case "1":
                 break;
             case "2":
-                managerSetupServicePrices();
+                managerSetupServicePrices(manager_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                managerSetupRepairServicePrices();
+                managerSetupRepairServicePrices(manager_id, sc_id);
                 break;
         }
     }
 
-    public void managerAddNewEmployees()
+    public void managerAddNewEmployees(int manager_id, String sc_id) throws SQLException
     {
         Scanner manager_add_new_employees_input = new Scanner(System.in);
 
@@ -1196,18 +1347,13 @@ class Manager
         switch(manager_add_new_employees_input_value)
         {
             case "1":
-                if((role.equalsIgnoreCase("receptionist")||(role.equalsIgnoreCase("mechanic")))
-                   //Go for it
-                   System.out.println("Okay");
-                else
-                   System.out.println("You don't have permission to add employees for this role.");
                 break;
             case "2":
-                managerOptions();
+                managerOptions(manager_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                managerAddNewEmployees();
+                managerAddNewEmployees(manager_id, sc_id);
                 break;
         }
     }
@@ -1216,7 +1362,7 @@ class Manager
 
 class Mechanic
 {
-    public void mechanicOptions()
+    public void mechanicOptions() throws SQLException
     {
         Home home = new Home();
         Scanner mechanic_input = new Scanner(System.in);
@@ -1255,7 +1401,7 @@ class Mechanic
         }
     }
 
-    public void viewScedule()
+    public void viewScedule() throws SQLException
     {
         Scanner view_schedule = new Scanner(System.in);
 
@@ -1280,21 +1426,27 @@ class Mechanic
         }
     }
 
-    public void requestTimeOff()
+    public void requestTimeOff() throws SQLException
     {
         Scanner request_time_off = new Scanner(System.in);
 
-        System.out.print("\nTime Slots when Mechanic wants off: ");
-        String mechanic_time_off = request_time_off.nextLine();
+        System.out.println("\nTime Slots when Mechanic wants off: ");
+        System.out.print("Week: ");
+        String week = request_time_off.nextLine();
+        System.out.print("Day: ");
+        String day = request_time_off.nextLine();
+        System.out.print("Slot start time: ");
+        String slot_start_time = request_time_off.nextLine();
+        System.out.print("Slot end time: ");
+        String slot_end_time = request_time_off.nextLine();
         System.out.println();
 
         System.out.println("1.  Send the Request");
-        String send_the_request = request_time_off.nextLine();
         System.out.println("2.  Go Back");
 
         System.out.print("\nEnter your choice here: ");
-
         String request_time_off_value = request_time_off.nextLine();
+
         switch(request_time_off_value)
         {
             case "1":
@@ -1309,20 +1461,36 @@ class Mechanic
         }
     }
 
-    public void requestSwap()
+    public void requestSwap() throws SQLException
     {
         Scanner request_swap = new Scanner(System.in);
 
-        System.out.print("\nTimeSlot range to swap: ");
-        String time_slot_swap = request_swap.nextLine();
-        System.out.print("\nEmployee ID of Mechanic that is requested for swap: ");
-        String mechanic_requested_swap = request_swap.nextLine();
-        System.out.print("\nTimeSlot range of the requested mechanic that is interested: ");
-        String interested_mechanic = request_swap.nextLine();
+        System.out.print("\n---TimeSlot range to swap---");
+        System.out.print("\nWeek: ");
+        String week1 = request_swap.nextLine();
+        System.out.print("Day: ");
+        String day1 = request_swap.nextLine();
+        System.out.print("Slot starting time: ");
+        String slot_starting_time1 = request_swap.nextLine();
+        System.out.print("Slot ending time: ");
+        String slot_ending_time1 = request_swap.nextLine();
+        
+        System.out.print("\n---Employee ID of Mechanic that is requested for swap: ---");
+        System.out.print("\nEmployee ID: ");
+        String employee_id = request_swap.nextLine();
+        
+        System.out.print("\n---TimeSlot range of the requested mechanic that is interested: ---");
+        System.out.print("\nWeek: ");
+        String week2 = request_swap.nextLine();
+        System.out.print("Day: ");
+        String day2 = request_swap.nextLine();
+        System.out.print("Slot starting time: ");
+        String slot_starting_time2 = request_swap.nextLine();
+        System.out.print("Slot ending time: ");
+        String slot_ending_time2 = request_swap.nextLine();
         System.out.println();
 
         System.out.println("1.  Send the Request");
-        String send_the_request = request_swap.nextLine();
         System.out.println("2.  Go Back");
 
         System.out.print("\nEnter your choice here: ");
@@ -1342,7 +1510,7 @@ class Mechanic
         }
     }
 
-    public void AcceptRejectSwap()
+    public void AcceptRejectSwap() throws SQLException
     {
         Scanner accept_reject_swap = new Scanner(System.in);
 
@@ -1376,7 +1544,7 @@ class Mechanic
         }
     }
 
-    public void manageSwapRequest()
+    public void manageSwapRequest() throws SQLException
     {
         Scanner manage_swap_request = new Scanner(System.in);
 
@@ -1385,9 +1553,7 @@ class Mechanic
         System.out.println();
 
         System.out.println("1.  Accept Swap");
-        String accept_swap = manage_swap_request.nextLine();
         System.out.println("2.  Reject Swap");
-        String reject_swap = manage_swap_request.nextLine();
         System.out.println("3.  Go Back");
 
         System.out.print("\nEnter your choice here: ");
@@ -1412,10 +1578,15 @@ class Mechanic
 
 class Login
 {
-    public void loginOptions()
+    public void loginOptions() throws SQLException
     {
+        String global_username;
         Home home = new Home();
         Admin admin = new Admin();
+        Customer customer = new Customer();
+        Manager manager = new Manager();
+        Mechanic mechanic = new Mechanic();
+        Receptionist receptionist = new Receptionist();
         Scanner login_input = new Scanner(System.in);
 
         System.out.print("\nUsername: ");
@@ -1429,11 +1600,58 @@ class Login
 
         System.out.print("\nEnter your choice here: ");
 
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        
+
         String login_input_value = login_input.nextLine();
         switch(login_input_value)
         {
             case "1":
-                admin.adminOptions();
+                ResultSet rs1 = stmt.executeQuery("SELECT EA.password, EA.username, EA.emp_id, EA.sc_id, EA.emp_role FROM EMPLOYEE_AUTH EA WHERE EA.username = '"+ username + "'");
+                if(!rs1.next()){
+                        ResultSet rs2 = stmt.executeQuery("SELECT C.c_id, C.sc_id, C.password, C.username FROM CUSTOMER C WHERE C.username = '"+ username + "'");
+                        if(rs2.next()){
+                                String cust_password = rs2.getString("password");
+                                if(password.equals(cust_password)){
+                                    int c_id = rs2.getInt("c_id");
+                                    String sc_id = rs2.getString("sc_id");
+                                    
+                                    customer.customerOptions(c_id, sc_id);
+
+                                }else{
+                                    System.out.print("INVALID PASSWORD!");
+                                }
+                               
+                            }else{
+                                System.out.println("User does not exist!");
+                            }
+                        
+                    }else{
+                        String emp_password = rs1.getString("password");
+                        if(password.equals(emp_password)){
+                            String role = rs1.getString("emp_role");
+                            if(role.equals("MANAGER")){
+                                int manager_id = rs1.getInt("emp_id");
+                                String sc_id = rs1.getString("sc_id");  
+                                manager.managerOptions(manager_id, sc_id);
+
+                            }else if(role.equals("MECHANIC")){
+                                int mechanic_Id = rs1.getInt("emp_id");
+                                String sc_id = rs1.getString("sc_id");
+                            }else if(role.equals("RECEPTIONIST")){
+                                int receptionist_Id = rs1.getInt("emp_id");
+                                String sc_id = rs1.getString("sc_id");
+                            }else{
+                                System.out.print("Employee ROLE NOT FOUND!");
+                            }
+                        } else {
+                            System.out.println("INVALID PASSWORD");
+                        }
+                        
+                    
+                }
+                
                 break;
             case "2":
                 home.homeOptions();
@@ -1446,71 +1664,85 @@ class Login
     }
 }
 
-class SignUp
-{
-    public void signUpOptions()
-    {
-        Home home = new Home();
-        Customer customer = new Customer();
-        Receptionist receptionist = new Receptionist();
-        Manager manager = new Manager();
-        Mechanic mechanic = new Mechanic();
-        Scanner signup_input = new Scanner(System.in);
+// class SignUp
+// {
+//     public void signUpOptions() throws SQLException
+//     {
+//         Home home = new Home();
+//         Customer customer = new Customer();
+//         Receptionist receptionist = new Receptionist();
+//         Manager manager = new Manager();
+//         Mechanic mechanic = new Mechanic();
+//         Scanner signup_input = new Scanner(System.in);
 
-        System.out.print("\nUsername: ");
-        String username = signup_input.nextLine();
-        System.out.print("First Name: ");
-        String first_name = signup_input.nextLine();
-        System.out.print("Last Name: ");
-        String last_name = signup_input.nextLine();
-        System.out.println();
-        System.out.println("\n1. Manager\n2. Receptionist\n3. Mechanic\n4. Customer\n");
-        System.out.print("Choose your role from above: ");
-        String role = signup_input.nextLine();
-        System.out.println();
+//         System.out.print("\nUsername: ");
+//         String username = signup_input.nextLine();
+//         System.out.print("First Name: ");
+//         String first_name = signup_input.nextLine();
+//         System.out.print("Last Name: ");
+//         String last_name = signup_input.nextLine();
+//         System.out.println();
+//         System.out.println("\n1. Manager\n2. Receptionist\n3. Mechanic\n4. Customer\n");
+//         System.out.print("Choose your role from above: ");
+//         String role = signup_input.nextLine();
+//         System.out.println();
         
-        System.out.println("\n1.  SignUp");
-        System.out.println("2.  Go Back");
+//         if(Integer.parseInt(role)<4)
+//         {
+//             System.out.println("\n1.  SignUp");
+//             System.out.println("2.  Go Back");
+//         }
+//         else
+//         {
+//             System.out.println("\nInvalid Input");
+//             signUpOptions();
+//         }
 
-        System.out.print("\nEnter your choice here: ");
+//         System.out.print("\nEnter your choice here: ");
 
-        String signup_input_value = signup_input.nextLine();
-        switch(signup_input_value)
-        {
-            case "1":
-                if(role.equals("1"))
-                    manager.managerOptions();
+//         String signup_input_value = signup_input.nextLine();
+//         switch(signup_input_value)
+//         {
+//             case "1":
+//                 if(role.equals("1"))
+//                     try {
+//                         manager.managerOptions();
+//                     } catch (SQLException e) {
+//                         // TODO Auto-generated catch block
+//                         e.printStackTrace();
+//                     }
+//                 else if(role.equals("2"))
+//                         receptionist.receptionistOptions();
 
-                    else if(role.equals("2"))
-                        receptionist.receptionistOptions();
+//                         else if(role.equals("3"))
+//                             mechanic.mechanicOptions();
 
-                        else if(role.equals("3"))
-                            mechanic.mechanicOptions();
-
-                            else if(role.equals("4"))
-                                customer.customerOptions();
-                break;
-            case "2":
-                home.homeOptions();
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                signUpOptions();
-                break;
-        }
-    }
-}
+//                             else if(role.equals("4"))
+//                                 //customer.customerOptions(c_id, sc_id);
+//                 break;
+//             case "2":
+//                 home.homeOptions();
+//                 break;
+//             default:
+//                 System.out.println("\n\nInvalid Input");
+//                 signUpOptions();
+//                 break;
+//         }
+//     }
+// }
 
 class Home
 {
-    public void homeOptions()
+    public void homeOptions() throws SQLException
     {
         Login login = new Login();
         SignUp signup = new SignUp();
+        Admin admin = new Admin();
         Scanner home_input = new Scanner(System.in);
 
         System.out.println("\n1.  Login");
-        System.out.println("2.  SignUp");
+        System.out.println("2.  Login as admin");
+        //System.out.println("2.  SignUp");
         System.out.println("3.  Exit");
 
         System.out.print("\nEnter your choice here: ");
@@ -1522,7 +1754,7 @@ class Home
                 login.loginOptions();
                 break;
             case "2":
-            signup.signUpOptions();
+                admin.adminOptions();
                 break;
             case "3":
                 System.out.println("\nYou are exited from the system.\n");
@@ -1538,7 +1770,7 @@ class Home
 
 class DBMSProject1Main
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws SQLException
     {
         Home home = new Home();
         home.homeOptions();
