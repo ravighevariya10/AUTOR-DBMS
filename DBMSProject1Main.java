@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-import javax.swing.SortingFocusTraversalPolicy;
+//import javax.swing.SortingFocusTraversalPolicy;
 
 import java.sql.*;
 
@@ -149,10 +149,16 @@ class Admin
             {
                 String sql1= "insert into SERVICE_CENTER(sc_id,address,min_wage,max_wage)values('"+ store_id + "','" + address + "','" + min_wage_mechanic + "','" + max_wage_mechanic + "')";
                 stmt.executeQuery(sql1);
+
+                String sql3= "insert into employee(emp_id,sc_id,emp_name,emp_address,emp_role)values('"+ employee_id + "','" + store_id + "','" + name + "','" + address + " ','" + "MANAGER" + "')";
+                stmt.executeQuery(sql3);
+
                 String sql2= "insert into manager(manager_id,sc_id,m_name,salary,username,password)values('"+ employee_id + "','" + store_id + "','" + name + "','" + salary + "','" + username + " ','" + password + "')";
                 stmt.executeQuery(sql2);
-                String sql3= "insert into employee(emp_id,sc_id,emp_name,salary,emp_address,emp_role)values('"+ employee_id + "','" + store_id + "','" + name + "','" + salary + "','" + address + " ','" + "MANAGER" + "')";
-                stmt.executeQuery(sql3);
+                
+                String sql4 = "insert into employee_auth(emp_id, sc_id, emp_role, username, password) values('"+ employee_id +"','" + store_id + "', '"+ "MANAGER" +"', '"+ username +"', '"+ password +"')";
+                stmt.executeQuery(sql4);
+
                 System.out.println("\n---Store Added---");
                 adminOptions();
             }
@@ -930,7 +936,7 @@ class Customer
 
 class Receptionist
 {
-    public void receptionistOptions() throws SQLException
+    public void receptionistOptions(int receptionist_id, String sc_id) throws SQLException
     {
         Home home = new Home();
         Scanner receptionist_input = new Scanner(System.in);
@@ -945,10 +951,10 @@ class Receptionist
         switch(receptionist_input_value)
         {
             case "1":
-                addNewCustomerProfile();
+                addNewCustomerProfile(receptionist_id, sc_id);
                 break;
             case "2":
-                findCustomerWithPendingInvoice();
+                findCustomerWithPendingInvoice(receptionist_id, sc_id);
                 break;
             case "3":
                 System.out.println("\nYou are logged out.");
@@ -956,12 +962,12 @@ class Receptionist
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                receptionistOptions();
+                receptionistOptions(receptionist_id, sc_id);
                 break;
         }
     }
 
-    public void addNewCustomerProfile() throws SQLException
+    public void addNewCustomerProfile(int receptionist_id, String sc_id) throws SQLException
     {
         Scanner add_new_customer_profile = new Scanner(System.in);
 
@@ -989,16 +995,16 @@ class Receptionist
         switch(add_new_customer_profile_value)
         {
             case "1":
-                receptionistOptions();
+                receptionistOptions(receptionist_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                addNewCustomerProfile();
+                addNewCustomerProfile(receptionist_id, sc_id);
                 break;
         }
     }
 
-    public void findCustomerWithPendingInvoice() throws SQLException
+    public void findCustomerWithPendingInvoice(int receptionist_id, String sc_id) throws SQLException
     {
         Scanner find_customer_with_pending_invoice = new Scanner(System.in);
 
@@ -1022,11 +1028,11 @@ class Receptionist
         switch(find_customer_with_pending_invoice_value)
         {
             case "1":
-                receptionistOptions();
+                receptionistOptions(receptionist_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                findCustomerWithPendingInvoice();
+                findCustomerWithPendingInvoice(receptionist_id, sc_id);
                 break;
         }
     }
@@ -1212,34 +1218,26 @@ class Manager
         Statement stmt = connection.createStatement();
         int i = 0;
 
-        
-        ResultSet rs1 = stmt.executeQuery("SELECT MODEL_NAME FROM MODEL");
         ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) FROM MODEL");
 
-        
+        rs2.next();
+        String schedule_a_price[] = new String[rs2.getInt("COUNT(*)")];
+        String schedule_b_price[] = new String[rs2.getInt("COUNT(*)")];
+        String schedule_c_price[] = new String[rs2.getInt("COUNT(*)")];
+        String model[] = new String[rs2.getInt("COUNT(*)")];
+        rs2.close();
 
-        if(rs2.next()){
-            String schedule_a_price[] = new String[rs2.getInt("COUNT(*)")];
-            String schedule_b_price[] = new String[rs2.getInt("COUNT(*)")];
-            String schedule_c_price[] = new String[rs2.getInt("COUNT(*)")];
-            String model[] = new String[rs2.getInt("COUNT(*)")];
-        
-        }
-            
-        
-        
+        ResultSet rs1 = stmt.executeQuery("SELECT MODEL_NAME FROM MODEL");
 
         while(rs1.next()){
-            System.out.print("\nSchedule A price for " + rs1.getString("model_name" + ": "));
+            System.out.print("\nSchedule A price for " + rs1.getString("model_name") +  ": ");
             schedule_a_price[i] = manager_setup_maintenance_service_prices_input.nextLine();
-            System.out.print("\n");
-            System.out.print("\nSchedule B price for " + rs1.getString("model_name" + ": "));
+            System.out.print("\nSchedule B price for " + rs1.getString("model_name") +  ": ");
             schedule_b_price[i] = manager_setup_maintenance_service_prices_input.nextLine();
-            System.out.print("\n");
-            System.out.print("\nSchedule C price for " + rs1.getString("model_name" + ": "));
+            System.out.print("\nSchedule C price for " + rs1.getString("model_name") +  ": ");
             schedule_c_price[i] = manager_setup_maintenance_service_prices_input.nextLine();
             System.out.print("\n");
-            model[i] = rs1.getString("model_name" + ": ");
+            model[i] = rs1.getString("model_name");
             i++;
         }
 
@@ -1252,28 +1250,37 @@ class Manager
         switch(manager_setup_maintenance_service_prices_input_value)
         {
             case "1":
+            try{
                 for(int m=0; m<schedule_a_price.length; m++){
 
                     ResultSet rs = stmt.executeQuery("SELECT S_NO FROM MAINTENANCE_DURATION WHERE SCHEDULE_NAME = '"+ "A" + "'");
-                    if(rs.next()){
-                        int s_no = rs.getInt("s_no");
-                    }
-                    stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[i] + "', '"+ schedule_a_price[i] + "','"+ s_no + "')");
+                    rs.next();
+                    int s_no = rs.getInt("s_no");
+                    rs.close();
+                    stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[m] + "', '"+ schedule_a_price[m] + "','"+ s_no + "')");
                 }
                 for(int j=0; j<schedule_b_price.length; j++){
                     ResultSet rs = stmt.executeQuery("SELECT S_NO FROM MAINTENANCE_DURATION WHERE SCHEDULE_NAME = '"+ "B" + "'");
-                    if(rs.next()){
-                        int s_no = rs.getInt("s_no");
-                    }
-                    stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[i] + "', '"+ schedule_b_price[i] + "','"+ s_no + "')");
+                    rs.next();
+                    int s_no = rs.getInt("s_no");
+                    rs.close();
+                    stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[j] + "', '"+ schedule_b_price[j] + "','"+ s_no + "')");
                 }
                 for(int k=0; k<schedule_c_price.length; k++){
                     ResultSet rs = stmt.executeQuery("SELECT S_NO FROM MAINTENANCE_DURATION WHERE SCHEDULE_NAME = '"+ "C" + "'");
-                    if(rs.next()){
-                        int s_no = rs.getInt("s_no");
-                    }
-                    stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[i] + "', '"+ schedule_c_price[i] + "','"+ s_no + "')");
+                    rs.next();
+                    int s_no = rs.getInt("s_no");
+                    rs.close();
+                    stmt.execute("INSERT INTO PRICE_CHECK(SC_ID,Manufacturer,price,s_no) VALUES('"+ sc_id + "','"+ model[k] + "', '"+ schedule_c_price[k] + "','"+ s_no + "')");
                 }
+
+                System.out.println("---Prices Set Successfully---");
+
+            }catch(SQLException e)
+            {
+                System.out.println("--->FAILED" + e);
+            }
+                
                 break;
             case "2":
                 managerSetupServicePrices(manager_id, sc_id);
@@ -1375,7 +1382,7 @@ class Manager
 
 class Mechanic
 {
-    public void mechanicOptions() throws SQLException
+    public void mechanicOptions(int mechanic_id, String sc_id) throws SQLException
     {
         Home home = new Home();
         Scanner mechanic_input = new Scanner(System.in);
@@ -1392,16 +1399,16 @@ class Mechanic
         switch(mechanic_input_value)
         {
             case "1":
-                viewScedule();
+                viewScedule(mechanic_id,sc_id);
                 break;
             case "2":
-                requestTimeOff();
+                requestTimeOff(mechanic_id,sc_id);
                 break;
             case "3":
-                requestSwap();
+                requestSwap(mechanic_id,sc_id);
                 break;
             case "4":
-                AcceptRejectSwap();
+                AcceptRejectSwap(mechanic_id,sc_id);
                 break;
             case "5":
                 System.out.println("\nYou are logged out.");
@@ -1409,12 +1416,12 @@ class Mechanic
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                mechanicOptions();
+                mechanicOptions(mechanic_id,sc_id);
                 break;
         }
     }
 
-    public void viewScedule() throws SQLException
+    public void viewScedule(int mechanic_id, String sc_id) throws SQLException
     {
         Scanner view_schedule = new Scanner(System.in);
 
@@ -1430,16 +1437,16 @@ class Mechanic
         switch(view_schedule_value)
         {
             case "1":
-                mechanicOptions();
+                mechanicOptions(mechanic_id,sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                viewScedule();
+                viewScedule(mechanic_id,sc_id);
                 break;
         }
     }
 
-    public void requestTimeOff() throws SQLException
+    public void requestTimeOff(int mechanic_id, String sc_id) throws SQLException
     {
         Scanner request_time_off = new Scanner(System.in);
 
@@ -1465,16 +1472,16 @@ class Mechanic
             case "1":
                 break;
             case "2":
-                mechanicOptions();
+                mechanicOptions(mechanic_id,sc_id);
                 break;    
             default:
                 System.out.println("\n\nInvalid Input");
-                requestTimeOff();
+                requestTimeOff(mechanic_id,sc_id);
                 break;
         }
     }
 
-    public void requestSwap() throws SQLException
+    public void requestSwap(int mechanic_id, String sc_id) throws SQLException
     {
         Scanner request_swap = new Scanner(System.in);
 
@@ -1514,16 +1521,16 @@ class Mechanic
             case "1":
                 break;
             case "2":
-                mechanicOptions();
+                mechanicOptions(mechanic_id,sc_id);
                 break;    
             default:
                 System.out.println("\n\nInvalid Input");
-                requestSwap();
+                requestSwap(mechanic_id,sc_id);
                 break;
         }
     }
 
-    public void AcceptRejectSwap() throws SQLException
+    public void AcceptRejectSwap(int mechanic_id, String sc_id) throws SQLException
     {
         Scanner accept_reject_swap = new Scanner(System.in);
 
@@ -1545,19 +1552,19 @@ class Mechanic
         switch(accept_reject_swap_value)
         {
             case "1":
-                manageSwapRequest();
+                manageSwapRequest(mechanic_id,sc_id);
                 break;
             case "2":
-                mechanicOptions();
+                mechanicOptions(mechanic_id,sc_id);
                 break;    
             default:
                 System.out.println("\n\nInvalid Input");
-                AcceptRejectSwap();
+                AcceptRejectSwap(mechanic_id,sc_id);
                 break;
         }
     }
 
-    public void manageSwapRequest() throws SQLException
+    public void manageSwapRequest(int mechanic_id, String sc_id) throws SQLException
     {
         Scanner manage_swap_request = new Scanner(System.in);
 
@@ -1579,11 +1586,11 @@ class Mechanic
             case "2":
                 break;
             case "3":
-                mechanicOptions();
+                mechanicOptions(mechanic_id,sc_id);
                 break;    
             default:
                 System.out.println("\n\nInvalid Input");
-                manageSwapRequest();
+                manageSwapRequest(mechanic_id,sc_id);
                 break;
         }
     }
@@ -1650,11 +1657,13 @@ class Login
                                 manager.managerOptions(manager_id, sc_id);
 
                             }else if(role.equals("MECHANIC")){
-                                int mechanic_Id = rs1.getInt("emp_id");
+                                int mechanic_id = rs1.getInt("emp_id");
                                 String sc_id = rs1.getString("sc_id");
+                                mechanic.mechanicOptions(mechanic_id,sc_id);
                             }else if(role.equals("RECEPTIONIST")){
-                                int receptionist_Id = rs1.getInt("emp_id");
+                                int receptionist_id = rs1.getInt("emp_id");
                                 String sc_id = rs1.getString("sc_id");
+                                receptionist.receptionistOptions(receptionist_id, sc_id);
                             }else{
                                 System.out.print("Employee ROLE NOT FOUND!");
                             }
@@ -1749,7 +1758,7 @@ class Home
     public void homeOptions() throws SQLException
     {
         Login login = new Login();
-        SignUp signup = new SignUp();
+        //SignUp signup = new SignUp();
         Admin admin = new Admin();
         Scanner home_input = new Scanner(System.in);
 
