@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.sql.*;
 
 
+
 class JDBC_Helper 
 {
 
@@ -491,10 +492,12 @@ class Customer
             case "1":
 
                 try{
-                    String sql1= "DELETE FROM VEHICLE V WHERE V.vin = (SELECT vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE  '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin)";
+                    String sql1= "DELETE FROM VEHICLE V WHERE V.vin = '"+ delete_vin +"'";
+                    //(SELECT V2.vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE  '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin)";
                     stmt.executeQuery(sql1);
     
-                    String sql2= "DELETE FROM VEHICLE_OWNED VO WHERE VO.vin = (SELECT vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin)";
+                    String sql2= "DELETE FROM VEHICLE_OWNED VO WHERE VO.vin = '"+ delete_vin +"'";
+                    //(SELECT V2.vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin)";
                     stmt.executeQuery(sql2);
     
                     ResultSet rs3 =  stmt.executeQuery("SELECT COUNT(*) FROM VEHICLE WHERE manufacturer = '"+ model_name +"' ");
@@ -503,8 +506,8 @@ class Customer
                     {
                         String sql3= "DELETE FROM MODEL WHERE model_name = '"+ model_name+"'";
                         stmt.executeQuery(sql3);
-                        System.out.println("\nModel Deleted");
                     }
+                    System.out.println("---Car deleted sucessfully---");
                 }
                 catch(SQLException e)
                 {
@@ -522,6 +525,7 @@ class Customer
                 break;
         }
     }
+
     public void viewScheduleService(int c_id, String sc_id) throws SQLException
     {
         Scanner customer_view_schedule_service_input = new Scanner(System.in);
@@ -1140,6 +1144,7 @@ class Customer
                 break;
         }
     }
+    
     public void customerPayInvoice(int c_id, String sc_id) throws SQLException
     {
         System.out.println("Enter invoice id: ");
@@ -1167,7 +1172,6 @@ class Customer
                 break;
         }
     }
-
 
 }
 
@@ -1820,7 +1824,7 @@ class Mechanic
         System.out.println();
 
         System.out.println("1.  Send the Request");
-        System.out.println("2.  Go Back");  
+        System.out.println("2.  Go Back");
 
         System.out.print("\nEnter your choice here: ");
         String request_time_off_value = request_time_off.nextLine();
