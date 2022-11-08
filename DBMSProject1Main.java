@@ -9,7 +9,6 @@ import java.util.Scanner;
 import java.sql.*;
 
 
-
 class JDBC_Helper 
 {
 
@@ -414,9 +413,10 @@ class Customer
                     String sql2= "INSERT INTO VEHICLE_OWNED(vin, sc_id, c_id) VALUES ('"+vin_number+"', '"+sc_id+"', '"+c_id+"')";
                     stmt.executeQuery(sql2);
 
-                    ResultSet rs =  stmt.executeQuery(sql2);
+                    ResultSet rs =  stmt.executeQuery("SELECT COUNT(*) FROM MODEL WHERE model_name = '"+ manufacturer_name +"'");
 
-                    if(rs.next())
+                    rs.next();
+                    if(rs.getInt("COUNT(*)") == 0)
                     {
                         String sql3= "INSERT INTO MODEL(model_name) VALUES ('"+manufacturer_name+"')";
                         stmt.executeQuery(sql3);
@@ -450,40 +450,68 @@ class Customer
         Connection connection = JDBC_Helper.getConnection();
         Statement stmt = connection.createStatement();
 
+        ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) FROM CUSTOMER C, VEHICLE_OWNED VO, VEHICLE V WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND V.vin = VO.vin");
+        rs2.next();
+        String[] vin_array = new String[rs2.getInt("COUNT(*)")];
+        String[] model_array = new String[rs2.getInt("COUNT(*)")];
+        rs2.close();
+
         ResultSet rs = stmt.executeQuery("SELECT DISTINCT V.vin, V.manufacturer, V.current_mileage, V.year FROM CUSTOMER C, VEHICLE_OWNED VO, VEHICLE V WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND V.vin = VO.vin");
         System.out.println("\n-----Your Cars-----");
-        ResultSet rs2 = stmt.executeQuery("SELECT COUNT(*) FROM CUSTOMER C, VEHICLE_OWNED VO, VEHICLE V WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND V.vin = VO.vin");
+        
         int i = 1;
-        rs2.next();
-        int[] vin_array = new int[rs2.getInt("COUNT(*)")];
-        rs2.close();
+        
         while(rs.next())
         {   
             System.out.println("Car " + i + ": ");
-            vin_array[i-1] = Integer.parseInt(rs.getString("vin"));
+            vin_array[i-1] = rs.getString("vin");
             System.out.println("Vehicle ID: " + rs.getString("vin"));  
-            System.out.println("Manufacturer: " + rs.getString("manufacturer"));  
+            System.out.println("Manufacturer: " + rs.getString("manufacturer")); 
+            model_array[i-1] = rs.getString("manufacturer");
             System.out.println("Mileage: " + rs.getString("current_mileage"));
-            System.out.println("Year: " + rs.getString("year")); 
+            System.out.println("Year: " + rs.getInt("year")); 
             System.out.println("\n"); 
             i++;
         }
+        rs.close();
+
+        System.out.print("\nEnter your choice to delete vehicle: ");
+        String delete_value = customer_delete_car_input.nextLine();
 
         System.out.println("\n1.  Select the car to delete");
         System.out.println("2.  Go back");
 
         System.out.print("\nEnter your choice here: ");
         String admin_add_delete_car_input_value = customer_delete_car_input.nextLine();
-        int delete_vin = vin_array[Integer.parseInt(admin_add_delete_car_input_value)-1];
+        String delete_vin = vin_array[Integer.parseInt(delete_value)-1];
+        String model_name = model_array[Integer.parseInt(delete_value)-1];
 
         switch(admin_add_delete_car_input_value)
         {
             case "1":
-                String sql1= "DELETE FROM VEHICLE V WHERE V.vin = SELECT vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE  '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin";
-                stmt.executeQuery(sql1);
 
-                String sql2= "DELETE FROM VEHICLE_OWNED VO WHERE VO.vin = SELECT vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin";
-                stmt.executeQuery(sql2);
+                try{
+                    String sql1= "DELETE FROM VEHICLE V WHERE V.vin = (SELECT vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE  '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin)";
+                    stmt.executeQuery(sql1);
+    
+                    String sql2= "DELETE FROM VEHICLE_OWNED VO WHERE VO.vin = (SELECT vin FROM VEHICLE V2, CUSTOMER C, VEHICLE_OWNED VO WHERE '"+ c_id +"'= C.c_id AND '"+ sc_id +"' = C.sc_id AND C.c_id = VO.c_id AND C.sc_id = VO.sc_id AND VO.vin = V.vin AND '"+ delete_vin +"'=V.vin)";
+                    stmt.executeQuery(sql2);
+    
+                    ResultSet rs3 =  stmt.executeQuery("SELECT COUNT(*) FROM VEHICLE WHERE manufacturer = '"+ model_name +"' ");
+                    rs3.next();
+                    if(rs3.getInt("COUNT(*)") == 0)
+                    {
+                        String sql3= "DELETE FROM MODEL WHERE model_name = '"+ model_name+"'";
+                        stmt.executeQuery(sql3);
+                        System.out.println("\nModel Deleted");
+                    }
+                }
+                catch(SQLException e)
+                {
+                    System.out.println("---> FAILED: " + e);
+                }
+                
+
                 break;
             case "2":
                 customerProfile(c_id, sc_id);
@@ -574,13 +602,13 @@ class Customer
         switch(customer_schedule_service_input_value)
         {
             case "1":
-                customerScheduleMaintenance(c_id, sc_id);
+                customerScheduleMaintenance(c_id, sc_id,vin);
                 break;
             case "2":
-                customerScheduleRepair(c_id, sc_id);
+                customerScheduleRepair(c_id, sc_id,vin);
                 break;
             case "3":
-                customerViewCart(c_id, sc_id);
+                customerViewCart(c_id, sc_id,vin);
                 break;   
             case "4":
                 viewScheduleService(c_id, sc_id);
@@ -592,43 +620,64 @@ class Customer
         }
     }
 
-    public void customerScheduleMaintenance(int c_id, String sc_id) throws SQLException
+    public void customerScheduleMaintenance(int c_id, String sc_id,String vin) throws SQLException
     {
         System.out.println("\n1.  These are the list of services you are eligible for:");
         //--Display a message with the service schedule the customer is eligible for (A, B, or C) and the cost.
 
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        
+
+        ResultSet rs = stmt.executeQuery("select LAST_SCHEDULED_MAINTENANCE_NAME from VEHICLE_LAST_SERVICED WHERE vin='" + vin + "'");
+        rs.next();
+        String last_schedule = rs.getString("LAST_SCHEDULED_MAINTENANCE_NAME");
+        rs.close();
+        String nextSchedule = "";
+
+        if(last_schedule.equals("A")){
+            nextSchedule = "B";
+            System.out.println("\n You are eligible for SCHEDULE B");
+        }else if(last_schedule.equals("B")){
+            nextSchedule = "C";
+            System.out.println("\n You are eligible for SCHEDULE C");
+        }else{
+            nextSchedule = "A";
+            System.out.println("\n You are eligible for SCHEDULE A");
+        } 
+
+
+
         Scanner customer_schedule_maintenance_input = new Scanner(System.in);
 
-        System.out.println("\n1.  A");
-        System.out.println("2.  B");
-        System.out.println("2.  C");
-        System.out.println("D.  Go Back");
+        System.out.println("\n1. Accept");
+        System.out.println("2.  Decline and go back");
         System.out.print("\nEnter your choice here: ");
 
         String customer_schedule_maintenance_input_value = customer_schedule_maintenance_input.nextLine();
 
         switch(customer_schedule_maintenance_input_value)
         {
-            case "A":
-                // home.customerOptions();
+            case "1":
+                // add to cart
+                try{
+                    stmt.execute("INSERT INTO CART(SERVICE_NAME,SERVICE_TYPE,C_ID,SC_ID,VIN) VALUES('"+nextSchedule+"','"+"MAINTENANCE"+"','"+c_id+"','"+sc_id+"','"+vin+"')");
+                    System.out.println("---->ADDED TO CART<----");
+                    customerScheduleService(c_id, sc_id);
+                }catch(SQLException e){
+                    System.out.print(e);
+                }
                 break;
-            case "B":
-               // home.customerOptions();
-                break;
-            case "C":
-               // home.customerOptions();
-                break;    
-            case "D":
-                customerScheduleService(c_id, sc_id);
-                break;
+            case "2":
+            customerScheduleService(c_id, sc_id);
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleMaintenance(c_id, sc_id);
+                customerScheduleMaintenance(c_id, sc_id,vin);
                 break;
         }
     }
 
-    public void customerScheduleRepair(int c_id, String sc_id)
+    public void customerScheduleRepair(int c_id, String sc_id, String vin) throws SQLException
     {
         Scanner customer_schedule_repair_input = new Scanner(System.in);
         //System.out.println("Customer ID: " + c_id + "\nStore ID: " + sc_id);
@@ -647,37 +696,350 @@ class Customer
         switch(customer_schedule_repair_input_value)
         {
             case "1":
-                 //home.customerScheduleMaintenance();
+                engineServices(c_id, sc_id, vin);
                 break;
             case "2":
-               // home.customerOptions();
+               exhaustServices(c_id, sc_id, vin);
                 break;
             case "3":
-                //home.customerScheduleService();
+                electricalServices(c_id, sc_id, vin);
                 break;
             case "4":
-                //home.customerScheduleService();
+                transmissionServices(c_id, sc_id, vin);
                 break;
             case "5":
-                //home.customerScheduleService();
+                tireServices(c_id, sc_id, vin);
                 break;
             case "6":
-                //home.customerScheduleService();
+                heatingServices(c_id, sc_id, vin);
                 break;
             case "7":
-                //home.customerScheduleService();
+                customerScheduleService(c_id, sc_id);
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerScheduleRepair(c_id, sc_id);
+                customerScheduleRepair(c_id, sc_id,vin);
                 break;
         }
     }
 
-    public void customerViewCart(int c_id, String sc_id) throws SQLException
+    public void engineServices(int c_id, String sc_id, String vin) throws SQLException
+    {
+        Scanner customer_schedule_repair_input = new Scanner(System.in);
+       
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        HashMap<String, String> services = new HashMap<String, String>();
+        ResultSet rs = stmt.executeQuery("SELECT R.SERVICE_NAME FROM REPAIR R,ENGINE_SERVICES E WHERE R.S_NO=E.S_NO");
+        int i = 1;
+        while(rs.next()){
+            services.put(String.valueOf(i),rs.getString("SERVICE_NAME"));
+            System.out.println("\n '"+i+"'.  '"+rs.getString("SERVICE_NAME")+"'\n");
+            i++;
+        }
+        
+        String customer_schedule_repair_input_value = customer_schedule_repair_input.nextLine();
+
+        System.out.println(customer_schedule_repair_input_value);
+
+        String service_name = services.get(customer_schedule_repair_input_value);
+        System.out.println("\n You sure you want to add '"+service_name+"'");
+        Scanner customer_repair_input = new Scanner(System.in);
+        System.out.println("\n1.Yes");
+        System.out.println("2.  No");
+        String customer_repair_input_value = customer_repair_input.nextLine();
+
+        
+        
+
+        switch(customer_repair_input_value)
+        {
+            case "1":
+                // add to cart
+                try{
+                    stmt.execute("INSERT INTO CART(SERVICE_NAME,SERVICE_TYPE,C_ID,SC_ID,VIN) VALUES('"+service_name+"','"+"REPAIR"+"','"+c_id+"','"+sc_id+"','"+vin+"')");
+                    System.out.println("---->ADDED TO CART<----");
+                    customerScheduleService(c_id, sc_id);
+                }catch(SQLException e){
+                    System.out.print(e);
+                } 
+                break;
+            case "2":
+               customerScheduleRepair(c_id, sc_id, vin);
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                //customerScheduleRepair(c_id, sc_id);
+                break;
+        }
+    }
+
+    public void exhaustServices(int c_id, String sc_id, String vin) throws SQLException
+    {
+        Scanner customer_schedule_repair_input = new Scanner(System.in);
+       
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        HashMap<String, String> services = new HashMap<String, String>();
+        ResultSet rs = stmt.executeQuery("SELECT R.SERVICE_NAME FROM REPAIR R,EXHAUST_SERVICES E WHERE R.S_NO=E.S_NO");
+        int i = 1;
+        while(rs.next()){
+            services.put("'"+i+"'",rs.getString("SERVICE_NAME"));
+            System.out.println("\n '"+i+"'.  '"+rs.getString("SERVICE_NAME")+"'");
+        }
+        
+        String customer_schedule_repair_input_value = customer_schedule_repair_input.nextLine();
+
+
+
+        String service_name = services.get(customer_schedule_repair_input_value);
+        System.out.println("\n You sure you want to add '"+service_name+"'");
+        Scanner customer_repair_input = new Scanner(System.in);
+        System.out.println("\n1.Yes");
+        System.out.println("2.  No");
+        String customer_repair_input_value = customer_repair_input.nextLine();
+
+        
+        
+
+        switch(customer_repair_input_value)
+        {
+            case "1":
+                // add to cart
+                try{
+                    stmt.execute("INSERT INTO CART(SERVICE_NAME,SERVICE_TYPE,C_ID,SC_ID,VIN) VALUES('"+service_name+"','"+"REPAIR"+"','"+c_id+"','"+sc_id+"','"+vin+"')");
+                    System.out.println("---->ADDED TO CART<----");
+                    customerScheduleService(c_id, sc_id);
+                }catch(SQLException e){
+                    System.out.print(e);
+                } 
+                break;
+            case "2":
+                customerScheduleRepair(c_id, sc_id, vin);
+               // home.customerOptions();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                //customerScheduleRepair(c_id, sc_id);
+                break;
+        }
+    }
+    
+    public void electricalServices(int c_id, String sc_id, String vin) throws SQLException
+    {
+        Scanner customer_schedule_repair_input = new Scanner(System.in);
+       
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        HashMap<String, String> services = new HashMap<String, String>();
+        ResultSet rs = stmt.executeQuery("SELECT R.SERVICE_NAME FROM REPAIR R,ELECTRICAL_SERVICES E WHERE R.S_NO=E.S_NO");
+        int i = 1;
+        while(rs.next()){
+            services.put("'"+i+"'",rs.getString("SERVICE_NAME"));
+            System.out.println("\n '"+i+"'.  '"+rs.getString("SERVICE_NAME")+"'");
+        }
+        
+        String customer_schedule_repair_input_value = customer_schedule_repair_input.nextLine();
+
+
+
+        String service_name = services.get(customer_schedule_repair_input_value);
+        System.out.println("\n You sure you want to add '"+service_name+"'");
+        Scanner customer_repair_input = new Scanner(System.in);
+        System.out.println("\n1.Yes");
+        System.out.println("2.  No");
+        String customer_repair_input_value = customer_repair_input.nextLine();
+
+        
+        
+
+        switch(customer_repair_input_value)
+        {
+            case "1":
+                // add to cart
+                try{
+                    stmt.execute("INSERT INTO CART(SERVICE_NAME,SERVICE_TYPE,C_ID,SC_ID,VIN) VALUES('"+service_name+"','"+"REPAIR"+"','"+c_id+"','"+sc_id+"','"+vin+"')");
+                    System.out.println("---->ADDED TO CART<----");
+                    customerScheduleService(c_id, sc_id);
+                }catch(SQLException e){
+                    System.out.print(e);
+                } 
+                break;
+            case "2":
+               // home.customerOptions();
+                customerScheduleRepair(c_id, sc_id, vin);
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                //customerScheduleRepair(c_id, sc_id);
+                break;
+        }
+    }
+    
+    public void transmissionServices(int c_id, String sc_id, String vin) throws SQLException
+    {
+        Scanner customer_schedule_repair_input = new Scanner(System.in);
+       
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        HashMap<String, String> services = new HashMap<String, String>();
+        ResultSet rs = stmt.executeQuery("SELECT R.SERVICE_NAME FROM REPAIR R,TRANSMISSION_SERVICES E WHERE R.S_NO=E.S_NO");
+        int i = 1;
+        while(rs.next()){
+            services.put("'"+i+"'",rs.getString("SERVICE_NAME"));
+            System.out.println("\n '"+i+"'.  '"+rs.getString("SERVICE_NAME")+"'");
+        }
+        
+        String customer_schedule_repair_input_value = customer_schedule_repair_input.nextLine();
+
+
+
+        String service_name = services.get(customer_schedule_repair_input_value);
+        System.out.println("\n You sure you want to add '"+service_name+"'");
+        Scanner customer_repair_input = new Scanner(System.in);
+        System.out.println("\n1.Yes");
+        System.out.println("2.  No");
+        String customer_repair_input_value = customer_repair_input.nextLine();
+
+        
+        
+
+        switch(customer_repair_input_value)
+        {
+            case "1":
+                // add to cart
+                try{
+                    stmt.execute("INSERT INTO CART(SERVICE_NAME,SERVICE_TYPE,C_ID,SC_ID,VIN) VALUES('"+service_name+"','"+"REPAIR"+"','"+c_id+"','"+sc_id+"','"+vin+"')");
+                    System.out.println("---->ADDED TO CART<----");
+                    customerScheduleService(c_id, sc_id);
+                }catch(SQLException e){
+                    System.out.print(e);
+                } 
+                break;
+            case "2":
+               // home.customerOptions();
+                customerScheduleRepair(c_id, sc_id, vin);
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                //customerScheduleRepair(c_id, sc_id);
+                break;
+        }
+    }
+    
+    public void tireServices(int c_id, String sc_id, String vin) throws SQLException
+    {
+        Scanner customer_schedule_repair_input = new Scanner(System.in);
+       
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        HashMap<String, String> services = new HashMap<String, String>();
+        ResultSet rs = stmt.executeQuery("SELECT R.SERVICE_NAME FROM REPAIR R,TIRE_SERVICES E WHERE R.S_NO=E.S_NO");
+        int i = 1;
+        while(rs.next()){
+            services.put("'"+i+"'",rs.getString("SERVICE_NAME"));
+            System.out.println("\n '"+i+"'.  '"+rs.getString("SERVICE_NAME")+"'");
+        }
+        
+        String customer_schedule_repair_input_value = customer_schedule_repair_input.nextLine();
+
+
+
+        String service_name = services.get(customer_schedule_repair_input_value);
+        System.out.println("\n You sure you want to add '"+service_name+"'");
+        Scanner customer_repair_input = new Scanner(System.in);
+        System.out.println("\n1.Yes");
+        System.out.println("2.  No");
+        String customer_repair_input_value = customer_repair_input.nextLine();
+
+        
+        
+
+        switch(customer_repair_input_value)
+        {
+            case "1":
+                // add to cart
+                try{
+                    stmt.execute("INSERT INTO CART(SERVICE_NAME,SERVICE_TYPE,C_ID,SC_ID,VIN) VALUES('"+service_name+"','"+"REPAIR"+"','"+c_id+"','"+sc_id+"','"+vin+"')");
+                    System.out.println("---->ADDED TO CART<----");
+                    customerScheduleService(c_id, sc_id);
+                }catch(SQLException e){
+                    System.out.print(e);
+                } 
+                break;
+            case "2":
+               // home.customerOptions();
+                customerScheduleRepair(c_id, sc_id, vin);
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                //customerScheduleRepair(c_id, sc_id);
+                break;
+        }
+    }
+    
+    public void heatingServices(int c_id, String sc_id, String vin) throws SQLException
+    {
+        Scanner customer_schedule_repair_input = new Scanner(System.in);
+       
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+        HashMap<String, String> services = new HashMap<String, String>();
+        ResultSet rs = stmt.executeQuery("SELECT R.SERVICE_NAME FROM REPAIR R,H_AND_AC_SERVICES E WHERE R.S_NO=E.S_NO");
+        int i = 1;
+        while(rs.next()){
+            services.put("'"+i+"'",rs.getString("SERVICE_NAME"));
+            System.out.println("\n '"+i+"'.  '"+rs.getString("SERVICE_NAME")+"'");
+        }
+        
+        String customer_schedule_repair_input_value = customer_schedule_repair_input.nextLine();
+
+
+
+        String service_name = services.get(customer_schedule_repair_input_value);
+        System.out.println("\n You sure you want to add '"+service_name+"'");
+        Scanner customer_repair_input = new Scanner(System.in);
+        System.out.println("\n1.Yes");
+        System.out.println("2.  No");
+        String customer_repair_input_value = customer_repair_input.nextLine();
+
+        
+        
+
+        switch(customer_repair_input_value)
+        {
+            case "1":
+                // add to cart
+                try{
+                    stmt.execute("INSERT INTO CART(SERVICE_NAME,SERVICE_TYPE,C_ID,SC_ID,VIN) VALUES('"+service_name+"','"+"REPAIR"+"','"+c_id+"','"+sc_id+"','"+vin+"')");
+                    System.out.println("---->ADDED TO CART<----");
+                    customerScheduleService(c_id, sc_id);
+                }catch(SQLException e){
+                    System.out.print(e);
+                } 
+                break;
+            case "2":
+                customerScheduleRepair(c_id, sc_id, vin);
+               // home.customerOptions();
+                break;
+            default:
+                System.out.println("\n\nInvalid Input");
+                //customerScheduleRepair(c_id, sc_id);
+                break;
+        }
+    }
+    
+    public void customerViewCart(int c_id, String sc_id,String vin) throws SQLException
     { 
         System.out.println("\n1.  These are the list of services in your cart. Do you wish to proceed to checkout?");
         //--list of services in cart
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT SERVICE_NAME FROM CART WHERE vin='"+vin+"' AND c_id='"+c_id+"' AND sc_id='"+sc_id+"'");
+        while(rs.next()){
+            System.out.println(rs.getString("SERVICE_NAME"));
+        }
 
         Scanner customer_view_cart_input = new Scanner(System.in);
 
@@ -697,199 +1059,7 @@ class Customer
                 break;
             default:
                 System.out.println("\n\nInvalid Input");
-                customerViewCart(c_id, sc_id);
-                break;
-        }
-    }
-
-    public void customerEngineServices(int c_id, String sc_id)
-    {
- 
-        System.out.println("For 'Engine Services', these are the services available");
-        System.out.println("\n1. Belt Replacement");
-        System.out.println("2. Engine Repair");
-        System.out.println("3. Go Back");
-
-        Scanner customer_engine_services_input = new Scanner(System.in);
-        System.out.println("Enter your choice here: ");
-
-        String customer_engine_services_input_value = customer_engine_services_input.nextLine();
-
-        switch(customer_engine_services_input_value)
-        {
-            case "1":
-                System.out.println("You've selected Belt Replacement. Added to cart. ");
-                // Add to cart
-                break;
-            case "2":
-                System.out.println("You've selected Engine Repair. Added to cart. ");
-                // Add to cart
-                break;
-            case "3":
-                customerScheduleRepair(c_id, sc_id);
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                customerEngineServices(c_id, sc_id);
-                break;
-        }
-    }
-    public void customerExhaustServices(int c_id, String sc_id)
-    {
- 
-        System.out.println("For 'Exhaust Services', these are the services available");
-        System.out.println("\n1. Catalytic Converter Repair");
-        System.out.println("2. Muffler Repair");
-        System.out.println("3. Go Back");
-
-        Scanner customer_exhaust_services_input = new Scanner(System.in);
-        System.out.println("Enter your choice here: ");
-
-        String customer_exhaust_services_input_value = customer_exhaust_services_input.nextLine();
-
-        switch(customer_exhaust_services_input_value)
-        {
-            case "1":
-                System.out.println("You've selected Catalytic Converter Repair. Added to cart. ");
-                // Add to cart
-                break;
-            case "2":
-                System.out.println("You've selected Muffler Repair. Added to cart. ");
-                // Add to cart
-                break;
-            case "3":
-                customerScheduleRepair(c_id, sc_id);
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                customerScheduleRepair(c_id, sc_id);
-                break;
-        }
-    }
-
-    public void customerElectricalServices(int c_id, String sc_id)
-    {
- 
-        System.out.println("For 'Electrical Services', these are the services available");
-        System.out.println("\n1. Alternator Repair");
-        System.out.println("2. Power Lock Repair");
-        System.out.println("3. Go Back");
-
-        Scanner customer_electrical_services_input = new Scanner(System.in);
-        System.out.println("Enter your choice here: ");
-
-        String customer_electrical_services_input_value = customer_electrical_services_input.nextLine();
-
-        switch(customer_electrical_services_input_value)
-        {
-            case "1":
-                System.out.println("You've selected Alternator Repair. Added to cart. ");
-                // Add to cart
-                break;
-            case "2":
-                System.out.println("You've selected Power Lock Repair. Added to cart. ");
-                // Add to cart
-                break;
-            case "3":
-                customerScheduleRepair(c_id, sc_id);
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                customerScheduleRepair(c_id, sc_id);
-                break;
-        }
-    }
-
-    public void customerTransmissionServices(int c_id, String sc_id)
-    {
- 
-        System.out.println("For 'Transmission Services', these are the services available");
-        System.out.println("\n1. Axle Repair");
-        System.out.println("2. Transmission Flush");
-        System.out.println("3. Go Back");
-
-        Scanner customer_transmission_services_input = new Scanner(System.in);
-        System.out.println("Enter your choice here: ");
-
-        String customer_transmission_services_input_value = customer_transmission_services_input.nextLine();
-
-        switch(customer_transmission_services_input_value)
-        {
-            case "1":
-                System.out.println("You've selected Axle Repair. Added to cart. ");
-                // Add to cart
-                break;
-            case "2":
-                System.out.println("You've selected Transmission Flush. Added to cart. ");
-                // Add to cart
-                break;
-            case "3":
-                customerScheduleRepair(c_id, sc_id);
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                customerScheduleRepair(c_id, sc_id);
-                break;
-        }
-    }
-
-    public void customerTireServices(int c_id, String sc_id)
-    {
- 
-        System.out.println("For 'Tire Services', these are the services available");
-        System.out.println("\n1. Tire Balancing");
-        System.out.println("2. Wheel Alignment");
-        System.out.println("3. Go Back");
-
-        Scanner customer_tire_services_input = new Scanner(System.in);
-        System.out.println("Enter your choice here: ");
-
-        String customer_tire_services_input_value = customer_tire_services_input.nextLine();
-
-        switch(customer_tire_services_input_value)
-        {
-            case "1":
-                System.out.println("You've selected Tire Balancing. Added to cart. ");
-                // Add to cart
-                break;
-            case "2":
-                System.out.println("You've selected Wheel Alignment. Added to cart. ");
-                // Add to cart
-                break;
-            case "3":
-                customerScheduleRepair(c_id, sc_id);
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                customerScheduleRepair(c_id, sc_id);
-                break;
-        }
-    }
-
-    public void customerHeatingACServices(int c_id, String sc_id)
-    {
- 
-        System.out.println("For 'Heating and AC Services', these are the services available");
-        System.out.println("\n1. Compressor Repair");
-        System.out.println("2. Go Back");
-
-        Scanner customer_heating_services_input = new Scanner(System.in);
-        System.out.println("Enter your choice here: ");
-
-        String customer_heating_services_input_value = customer_heating_services_input.nextLine();
-
-        switch(customer_heating_services_input_value)
-        {
-            case "1":
-                System.out.println("You've selected Compressor Repair. Added to cart. ");
-                // Add to cart
-                break;
-            case "2":
-                customerScheduleRepair(c_id, sc_id);
-                break;
-            default:
-                System.out.println("\n\nInvalid Input");
-                customerScheduleRepair(c_id, sc_id);
+                customerViewCart(c_id, sc_id,vin);
                 break;
         }
     }
@@ -1650,7 +1820,7 @@ class Mechanic
         System.out.println();
 
         System.out.println("1.  Send the Request");
-        System.out.println("2.  Go Back");
+        System.out.println("2.  Go Back");  
 
         System.out.print("\nEnter your choice here: ");
         String request_time_off_value = request_time_off.nextLine();
