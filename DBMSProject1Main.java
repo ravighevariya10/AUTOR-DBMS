@@ -1215,13 +1215,14 @@ class Receptionist
         Connection connection = JDBC_Helper.getConnection();
         Statement stmt = connection.createStatement();
 
-        ResultSet rs = stmt.executeQuery("SELECT MAX(c_id) FROM MODEL");
-
+        ResultSet rs = stmt.executeQuery("SELECT MAX(c_id) FROM CUSTOMER");
+        rs.next();
         int cid_counter = rs.getInt("MAX(c_id)") + 1;
+        rs.close();
 
-        System.out.print("\nFirst Name: ");
-        String c_fname = add_new_customer_profile.nextLine();
-        System.out.print("\nLast Name: ");
+        System.out.print("\nName: ");
+        String c_name = add_new_customer_profile.nextLine();
+        System.out.print("Last Name: ");
         String c_lname = add_new_customer_profile.nextLine();
         System.out.print("Address: ");
         String address = add_new_customer_profile.nextLine();
@@ -1235,13 +1236,26 @@ class Receptionist
         String vin_number = add_new_customer_profile.nextLine();
         System.out.print("Car Manufacturer: ");
         String car_manufacturer = add_new_customer_profile.nextLine();
+        System.out.print("Car Mileage: ");
+        String car_mileage = add_new_customer_profile.nextLine();
         System.out.println();
 
         try
         {
-            stmt.execute("insert into CUSTOMER(c_id, c_fname, c_lname, address, email_address, phone_number, username, password, sc_id) values('"+ cid_counter +"', "+ c_fname + "','" + c_lname + "','" + address + "','" + email_address + "','" + phone_number + "','" + username + "','" + c_lname + "', '"+ sc_id +"')");
-            stmt.execute("insert into VEHICLE(vin, manufacturer) values('"+ vin_number + "','" + car_manufacturer + "')");    
+            stmt.execute("insert into CUSTOMER(c_id, c_name, address, email_address, phone_number, username, password, sc_id) values('"+ cid_counter +"', '"+ c_name + "','" + address + "','" + email_address + "','" + phone_number + "','" + username + "','" + c_lname + "', '"+ sc_id +"')");
+            stmt.execute("insert into VEHICLE(vin, manufacturer, current_mileage) values('"+ vin_number + "','" + car_manufacturer + "', '"+ car_mileage +"')");    
             stmt.execute("insert into VEHICLE_OWNED(vin, sc_id, c_id) values('"+ vin_number + "','" + sc_id + "','" + cid_counter + "')");
+            
+            ResultSet rs1 =  stmt.executeQuery("SELECT COUNT(*) FROM MODEL WHERE model_name = '"+ car_manufacturer +"'");
+
+            rs1.next();
+            if(rs1.getInt("COUNT(*)") == 0)
+            {
+                String sql= "INSERT INTO MODEL(model_name) VALUES ('"+car_manufacturer+"')";
+                stmt.executeQuery(sql);
+            }
+
+            
             System.out.println("---Customer Added---");
             receptionistOptions(receptionist_id, sc_id);
         }
@@ -1401,6 +1415,8 @@ class Manager
 
         System.out.print("\nName: ");
         String name = manager_add_employees_input.nextLine();
+        System.out.print("\nLast Name: ");
+        String lastName = manager_add_employees_input.nextLine();
         System.out.print("Address: ");
         String address = manager_add_employees_input.nextLine();
         System.out.print("Email Address: ");
@@ -1429,6 +1445,10 @@ class Manager
                 try{
                     String sql1 = "INSERT INTO EMPLOYEE (EMP_ID,EMP_NAME,SC_ID, EMP_EMAIL, EMP_ADDRESS, EMP_CONTACT, EMP_ROLE, EMP_STARTDATE, EMP_COMPENSATION)VALUES('"+ emp_id + "','"+ name + "','"+ sc_id +"','"+ email_address +"','"+ address +"','"+ phone_number +"','"+ role +"', TO_DATE('"+start_date+"', 'YYYY/MM/DD'),'"+ compensation +"')";
                     stmt.executeQuery(sql1);
+                    String username = sc_id+emp_id;
+                    String password = lastName;
+                    String sql5 = "INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('"+ emp_id + "','"+ sc_id + "', '"+ role + "','"+ username + "','"+ password + "')";
+                    stmt.executeQuery(sql5);
                     System.out.println("-----"+ role +" added-----");
                     managerOptions(manager_id, sc_id);
                  }
@@ -1787,12 +1807,45 @@ class Mechanic
     {
         Scanner view_schedule = new Scanner(System.in);
 
-        System.out.print("\nList of Time Slot When Mechanic is Booked for Service: ");
-        String mechanic_booked_time = view_schedule.nextLine();
-        System.out.println();
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
 
-        System.out.println("1.  Go Back");
+        int  i = 1;
 
+       // String[] array = {"","",};
+        HashMap<String, String[]> hashmap = new HashMap<>();
+        hashmap.put("1", new String[] {"8:00", "9:00"});
+        hashmap.put("2", new String[] {"9:00", "10:00"});
+        hashmap.put("3", new String[] {"10:00", "11:00"});
+        hashmap.put("4", new String[] {"11:00", "12:00"});
+        hashmap.put("5", new String[] {"13:00", "14:00"});
+        hashmap.put("6", new String[] {"14:00", "15:00"});
+        hashmap.put("7", new String[] {"15:00", "16:00"});
+        hashmap.put("8", new String[] {"16:00", "17:00"});
+        hashmap.put("9", new String[] {"17:00", "18:00"});
+        hashmap.put("10", new String[] {"18:00", "19:00"});
+        hashmap.put("11", new String[] {"19:00", "20:00"});
+        
+
+        ResultSet rs = stmt.executeQuery("SELECT SS.START_TIME_SLOT, SS.END_TIME_SLOT FROM SCHEDULED_SERVICES SS WHERE '"+ mechanic_id +"' = SS.MECHANIC_ID");
+
+        if(!rs.next())
+            System.out.println("\n----> Currently, no any schedule assigned to you.");
+        else
+        {
+            System.out.println("\n----- List of your time slots -----");
+            do{
+
+                System.out.println("\nSchedule " + i + ": ");
+                System.out.println("Start Time: " + hashmap.get(rs.getString("start_time_slot"))[0]);
+                System.out.println("End Time: " + hashmap.get(rs.getString("end_time_slot"))[0]);
+                System.out.println("\n---------------------------");
+                i++;
+
+            }while(rs.next());
+        }
+
+        System.out.println("\n1.  Go Back");
         System.out.print("\nEnter your choice here: ");
 
         String view_schedule_value = view_schedule.nextLine();
@@ -1812,65 +1865,182 @@ class Mechanic
     {
         Scanner request_time_off = new Scanner(System.in);
 
-        System.out.println("\nTime Slots when Mechanic wants off: ");
-        System.out.print("Week: ");
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT timeoff_request_id FROM REQUEST_TIME_OFF WHERE '"+ mechanic_id +"' = MECHANIC_ID");
+
+        
+        if(rs.next())
+        {
+            System.out.println("\n-----Your requested time slots-----");
+
+            do
+            {
+
+                System.out.println("\nRequest ID: " + rs.getString("timeoff_request_id"));
+                System.out.println("Status: Pending");
+                System.out.println("\n-------------------");
+
+            }while(rs.next());
+            rs.close();
+        }
+        
+
+        System.out.print("\nWeek(1 to 4): ");
         String week = request_time_off.nextLine();
-        System.out.print("Day: ");
+        System.out.print("Day(1 to 7): ");
         String day = request_time_off.nextLine();
-        System.out.print("Slot start time: ");
+        System.out.print("Slot start time ID(1 to 11): ");
         String slot_start_time = request_time_off.nextLine();
-        System.out.print("Slot end time: ");
+        System.out.print("Slot end time ID(1 to 11): ");
         String slot_end_time = request_time_off.nextLine();
         System.out.println();
 
-        System.out.println("1.  Send the Request");
-        System.out.println("2.  Go Back");
-
-        System.out.print("\nEnter your choice here: ");
-        String request_time_off_value = request_time_off.nextLine();
-
-        switch(request_time_off_value)
+        if(Integer.parseInt(week)<5 && Integer.parseInt(day)<8 && Integer.parseInt(slot_start_time)<12 && Integer.parseInt(slot_end_time)<12)
         {
-            case "1":
-                break;
-            case "2":
-                mechanicOptions(mechanic_id,sc_id);
-                break;    
-            default:
-                System.out.println("\n\nInvalid Input");
-                requestTimeOff(mechanic_id,sc_id);
-                break;
+            int id_counter = 1;
+
+            ResultSet rs1 = stmt.executeQuery("SELECT MAX(timeoff_request_id) FROM REQUEST_TIME_OFF");
+            rs1.next();
+    
+            if(rs1.getString("MAX(timeoff_request_id)") != null)
+                id_counter = Integer.parseInt(rs1.getString("MAX(timeoff_request_id)")) + 1;
+            
+            rs1.close();
+    
+            System.out.println("1.  Send the Request");
+            System.out.println("2.  Go Back");
+    
+            System.out.print("\nEnter your choice here: ");
+            String request_time_off_value = request_time_off.nextLine();
+    
+            switch(request_time_off_value)
+            {
+                case "1":
+                    try
+                    {
+                        stmt.execute("INSERT INTO request_time_off(mechanic_id, sc_id, week, day, start_time, end_time, timeoff_request_id) VALUES('"+ mechanic_id + "','"+ sc_id + "','"+ week + "','"+ day + "','"+ slot_start_time + "','"+ slot_end_time + "', '"+ id_counter +"')");
+                        System.out.println("-----Request Status-----");
+                        System.out.println("\nRequest ID: " + id_counter );
+                        System.out.println("Status: Sent");
+                        
+                        System.out.print("\n---> Send another request? (Y/N) ");
+                        String another_request = request_time_off.nextLine();
+    
+                        if(another_request == "Y")
+                            requestTimeOff(mechanic_id, sc_id);
+                        else
+                            mechanicOptions(mechanic_id, sc_id);
+    
+                    }
+                    catch(SQLException e)
+                    {
+                        System.out.println("----> FAILED: " + e);
+                    }
+                    break;
+                case "2":
+                    mechanicOptions(mechanic_id,sc_id);
+                    break;    
+                default:
+                    System.out.println("\n\nInvalid Input");
+                    requestTimeOff(mechanic_id,sc_id);
+                    break;
+            }
         }
+        else
+        {
+            System.out.println("----> ERROR: Invalid Input");
+            requestTimeOff(mechanic_id, sc_id);
+        }
+
+       
     }
 
     public void requestSwap(int mechanic_id, String sc_id) throws SQLException
     {
         Scanner request_swap = new Scanner(System.in);
 
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT request_id, status FROM REQUEST_SWAP WHERE '"+ mechanic_id +"' = MECHANIC_ID_1");
+
+        
+        if(rs.next())
+        {
+            System.out.println("\n-----Your already requested time slots-----");
+
+            do
+            {
+
+                System.out.println("\nRequest ID: " + rs.getString("request_id"));
+                System.out.println("Status: " + rs.getString("STATUS"));
+                System.out.println("\n-------------------");
+
+            }while(rs.next());
+            rs.close();
+        }
+
         System.out.print("\n---TimeSlot range to swap---");
-        System.out.print("\nWeek: ");
+        System.out.print("\nWeek(1 to 4): ");
         String week1 = request_swap.nextLine();
-        System.out.print("Day: ");
+        System.out.print("Day(1 to 7): ");
         String day1 = request_swap.nextLine();
-        System.out.print("Slot starting time: ");
+        System.out.print("Slot starting time ID(1 to 11): ");
         String slot_starting_time1 = request_swap.nextLine();
-        System.out.print("Slot ending time: ");
+        System.out.print("Slot ending time ID(1 to 11): ");
         String slot_ending_time1 = request_swap.nextLine();
         
-        System.out.print("\n---Employee ID of Mechanic that is requested for swap: ---");
+        System.out.print("\n---Employee ID of Mechanic with whom you want to swap: ---");
         System.out.print("\nEmployee ID: ");
         String employee_id = request_swap.nextLine();
-        
-        System.out.print("\n---TimeSlot range of the requested mechanic that is interested: ---");
-        System.out.print("\nWeek: ");
-        String week2 = request_swap.nextLine();
-        System.out.print("Day: ");
-        String day2 = request_swap.nextLine();
-        System.out.print("Slot starting time: ");
+
+        ResultSet rs4 = stmt.executeQuery("SELECT COUNT(*) FROM EMPLOYEE E, SERVICE_CENTER SC WHERE E.emp_id = '"+ employee_id +"' AND SC.sc_id = '"+ sc_id +"'");
+        rs4.next();
+        if(rs4.getInt("COUNT(*)") != 1)
+        {
+            System.out.println("\nThis mechanic does not exists in your service center\n-----> Please enter the right employee id");
+            System.out.print("\nEmployee ID: ");
+            employee_id = request_swap.nextLine();
+        }
+        rs4.close();
+
+
+        ResultSet rs5 = stmt.executeQuery("SELECT COUNT(*) FROM EMPLOYEE E, SERVICE_CENTER SC WHERE E.emp_id = '"+ employee_id +"' AND SC.sc_id = '"+ sc_id +"'");
+        rs5.next();
+        if(rs5.getInt("COUNT(*)") != 1)
+        {
+            System.out.println("\nThis mechanic does not exists in your service center\n-----> Please enter the right employee id");
+            System.out.print("\nEmployee ID: ");
+            employee_id = request_swap.nextLine();
+        }
+        rs5.close();
+
+        System.out.print("\n---Interested timeslot range: ---");
+        // System.out.print("\nWeek(1 to 4): ");
+        // String week2 = request_swap.nextLine();
+        // System.out.print("Day(1 to 7): ");
+        // String day2 = request_swap.nextLine();
+        System.out.print("\nSlot starting time ID(1 to 11): ");
         String slot_starting_time2 = request_swap.nextLine();
-        System.out.print("Slot ending time: ");
+        System.out.print("Slot ending time ID(1 to 11): ");
         String slot_ending_time2 = request_swap.nextLine();
         System.out.println();
+
+        if(Integer.parseInt(week1)<5 && Integer.parseInt(day1)<8 && Integer.parseInt(slot_starting_time1)<12 && Integer.parseInt(slot_ending_time1)<12 && Integer.parseInt(slot_starting_time2)<12 && Integer.parseInt(slot_ending_time2)<12)
+        {
+            int id_counter = 1;
+
+        ResultSet rs1 = stmt.executeQuery("SELECT MAX(request_id) FROM REQUEST_SWAP");
+        rs1.next();
+
+        if(rs1.getString("MAX(request_id)") != null)
+            id_counter = Integer.parseInt(rs1.getString("MAX(request_id)")) + 1;
+        
+        rs1.close();
+
+        String request_id = String.valueOf(id_counter);
 
         System.out.println("1.  Send the Request");
         System.out.println("2.  Go Back");
@@ -1881,6 +2051,29 @@ class Mechanic
         switch(request_swap_value)
         {
             case "1":
+
+            try
+            {
+
+                stmt.execute("INSERT INTO request_swap(request_id, mechanic_id_1, sc_id, week_1, day_1, start_time_1, end_time_1, mechanic_id_2, start_time_2, end_time_2, status) VALUES('"+ request_id +"', '"+ mechanic_id +"','"+ sc_id +"','"+ week1+"','"+ day1 +"','"+ slot_starting_time1 +"','"+ slot_ending_time1 +"', '"+ employee_id +"', '"+ slot_starting_time2 +"', '"+ slot_ending_time2 +"', '"+ "PENDING" +"')");
+                System.out.println("-----Request Status-----");
+                System.out.println("\nRequest ID: " + id_counter);
+                System.out.println("Status: Sent");
+                
+                System.out.print("\n---> Send another request? (Y/N) ");
+                String another_request = request_swap.nextLine();
+
+                if(another_request == "Y")
+                    requestSwap(mechanic_id, sc_id);
+                else
+                    mechanicOptions(mechanic_id, sc_id);
+
+            }
+            catch(SQLException e)
+            {
+                System.out.println("----> FAILED: " + e);
+            }
+
                 break;
             case "2":
                 mechanicOptions(mechanic_id,sc_id);
@@ -1890,43 +2083,83 @@ class Mechanic
                 requestSwap(mechanic_id,sc_id);
                 break;
         }
+        }
+        else
+        {
+            System.out.println("----> ERROR: Invalid Input");
+            requestSwap(mechanic_id, sc_id);
+        }
+
+        
     }
 
     public void AcceptRejectSwap(int mechanic_id, String sc_id) throws SQLException
     {
         Scanner accept_reject_swap = new Scanner(System.in);
 
-        System.out.print("\nRequest ID: ");
-        String request_id = accept_reject_swap.nextLine();
-        System.out.print("\nRequestinf Mechanic's Name: ");
-        String requesting_mechanic_name = accept_reject_swap.nextLine();
-        System.out.print("\nTimeSlot range requested: ");
-        String timeslot_range_requested = accept_reject_swap.nextLine();
-        System.out.println();
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
 
-        System.out.println("1.  Manage Swap Request");
-        String manage_swap_request = accept_reject_swap.nextLine();
-        System.out.println("2.  Go Back");
+        String accept_reject_swap_value;
 
-        System.out.print("\nEnter your choice here: ");
+        ResultSet rs1 = stmt.executeQuery("SELECT COUNT(*) FROM REQUEST_SWAP RS, EMPLOYEE E WHERE RS.mechanic_id_1 = E.emp_id AND RS.sc_id = E.sc_id AND RS.mechanic_id_2 = '"+ mechanic_id +"' AND RS.sc_id = '"+ sc_id +"'");        
+        rs1.next();
+        String rid[] = new String[rs1.getInt("COUNT(*)")];
+        rs1.close();
 
-        String accept_reject_swap_value = accept_reject_swap.nextLine();
-        switch(accept_reject_swap_value)
+        int i = 0;
+
+        ResultSet rs = stmt.executeQuery("SELECT RS.request_id, E.emp_name, RS.start_time_2, RS.end_time_2 FROM REQUEST_SWAP RS, EMPLOYEE E WHERE RS.mechanic_id_1 = E.emp_id AND RS.sc_id = E.sc_id AND RS.mechanic_id_2 = '"+ mechanic_id +"' AND RS.sc_id = '"+ sc_id +"' AND status = '"+ "PENDING" +"'");
+
+        if(rs.next())
         {
-            case "1":
-                manageSwapRequest(mechanic_id,sc_id);
-                break;
-            case "2":
+            System.out.println("\n-----Swap Requests-----");
+            do
+            {
+                rid[i] = rs.getString("request_id");
+                System.out.println("Request ID: " + rs.getString("request_id"));
+                System.out.println("Mechanic name: " + rs.getString("emp_name"));
+                System.out.println("Time slot range: " + rs.getString("start_time_2") + " to " + rs.getString("end_time_2"));
+                System.out.println("---------------");
+                i++;
+
+            }while(rs.next());
+
+            System.out.println("\n1.  Manage Swap Request");
+            System.out.println("2.  Go Back");
+
+            System.out.print("\nEnter your choice here: ");
+            accept_reject_swap_value = accept_reject_swap.nextLine();
+
+            switch(accept_reject_swap_value)
+            {
+                case "1":
+                    manageSwapRequest(mechanic_id,sc_id, rid);
+                    break;
+                case "2":
+                    mechanicOptions(mechanic_id,sc_id);
+                    break;    
+                default:
+                    System.out.println("\n\nInvalid Input");
+                    AcceptRejectSwap(mechanic_id,sc_id);
+                    break;
+            }
+
+        }
+        else
+        {
+            System.out.println("-----> You don't have any swap request.");
+            System.out.println("Go Back(Y/N)? ");
+            System.out.print("\nEnter your choice here: ");
+            accept_reject_swap_value = accept_reject_swap.nextLine();
+            if(accept_reject_swap_value == "Y")
                 mechanicOptions(mechanic_id,sc_id);
-                break;    
-            default:
-                System.out.println("\n\nInvalid Input");
+            else
                 AcceptRejectSwap(mechanic_id,sc_id);
-                break;
         }
     }
 
-    public void manageSwapRequest(int mechanic_id, String sc_id) throws SQLException
+    public void manageSwapRequest(int mechanic_id, String sc_id, String rid[]) throws SQLException
     {
         Scanner manage_swap_request = new Scanner(System.in);
 
@@ -1934,26 +2167,52 @@ class Mechanic
         String request_id = manage_swap_request.nextLine();
         System.out.println();
 
-        System.out.println("1.  Accept Swap");
-        System.out.println("2.  Reject Swap");
-        System.out.println("3.  Go Back");
+        Connection connection = JDBC_Helper.getConnection();
+        Statement stmt = connection.createStatement();
 
-        System.out.print("\nEnter your choice here: ");
+        int check = 0;
 
-        String accept_reject_swap_value = manage_swap_request.nextLine();
-        switch(accept_reject_swap_value)
+        for(int i=0; i<rid.length; i++)
         {
-            case "1":
-                break;
-            case "2":
-                break;
-            case "3":
-                mechanicOptions(mechanic_id,sc_id);
-                break;    
-            default:
-                System.out.println("\n\nInvalid Input");
-                manageSwapRequest(mechanic_id,sc_id);
-                break;
+            if(request_id == rid[i])
+                check++;
+        }
+
+        if(check==0)
+        {
+            System.out.println("\n--->You entered wrong request ID.");
+            System.out.print("\nRequest ID: ");
+            request_id = manage_swap_request.nextLine();
+            System.out.println();
+        }
+        else
+        {
+            System.out.println("1.  Accept Swap");
+            System.out.println("2.  Reject Swap");
+            System.out.println("3.  Go Back");
+
+            System.out.print("\nEnter your choice here: ");
+            String accept_reject_swap_value = manage_swap_request.nextLine();
+
+            switch(accept_reject_swap_value)
+            {
+                case "1":
+
+                    stmt.executeQuery("UPDATE REQUEST_SWAP SET status = '"+ "Accepted" +"' WHERE reuest_id = '"+ request_id +"'");
+                    System.out.println("---> Request accepted successfully.");
+                    break;
+                case "2":
+                    stmt.executeQuery("UPDATE REQUEST_SWAP SET status = '"+ "Rejected" +"' WHERE reuest_id = '"+ request_id +"'");
+                    System.out.println("---> Request rejected successfully.");
+                    break;
+                case "3":
+                    mechanicOptions(mechanic_id,sc_id);
+                    break;    
+                default:
+                    System.out.println("\n\nInvalid Input");
+                    manageSwapRequest(mechanic_id,sc_id, rid);
+                    break;
+            }
         }
     }
 }
