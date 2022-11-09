@@ -1,6 +1,22 @@
 Instructions on how to compile and execute the code
-  1. Run the .java file.
-  (to be completed...)
+The procedures for setting up the environment needed to compile and run the code are listed below.
+A.	REMOTE CONNECTION
+  1.	Putty is required to establish a connection to the remote EOS server. Click here to download it.
+  2.	When the file has downloaded, run it.
+  3.	Under "Host Name," include "remote.eos.ncsu.edu". Below is a screenshot that provides more information.
+  4.	Click ‘Open’. Upon giving your unity ID and password, you will be connected to the remote EOS server, the terminal will look like this in Windows.
+
+B.	EXECUTION
+  1.	In the command prompt of your system, run the following query:
+        pscp -P 22 DBMSProject1Main.java sbhatia6@remote.eos.ncsu.edu:/afs/unity.ncsu.edu/users/s/sbhatia6/
+  2.	Add Oracle to your environment using - 
+        add oracle12
+  3.	Set the CLASSPATH variable to include the JDBC drivers.
+        export CLASSPATH=.:/afs/eos.ncsu.edu/software/oracle12/oracle/product/12.2/client/jdbc/lib/ojdbc8.jar
+  4.	Run the following command: 
+        javac DBMSProject1Main.java 
+  5.	Executing the file: 
+        java DBMSProject1Main.java 
 
 Member Names and Unity IDs
   1. Manan Patel (@mrpatel8)
