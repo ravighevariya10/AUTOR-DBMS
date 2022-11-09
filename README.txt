@@ -10,9 +10,9 @@ A.	REMOTE CONNECTION
 B.	EXECUTION
   1.	In the command prompt of your system, run the following query:
            pscp -P 22 DBMSProject1Main.java sbhatia6@remote.eos.ncsu.edu:/afs/unity.ncsu.edu/users/s/sbhatia6/
-  2.	Add Oracle to your environment using - 
+  2.	Add Oracle to your environment in the remote server using - 
            add oracle12
-  3.	Set the CLASSPATH variable to include the JDBC drivers.
+  3.	Set the CLASSPATH variable to include the JDBC drivers in the remote server.
            export CLASSPATH=.:/afs/eos.ncsu.edu/software/oracle12/oracle/product/12.2/client/jdbc/lib/ojdbc8.jar
   4.	Run the following command: 
            javac DBMSProject1Main.java 
