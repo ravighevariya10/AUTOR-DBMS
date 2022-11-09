@@ -1991,6 +1991,20 @@ class Mechanic
         String slot_starting_time1 = request_swap.nextLine();
         System.out.print("Slot ending time ID(1 to 11): ");
         String slot_ending_time1 = request_swap.nextLine();
+
+        ResultSet rs6 = stmt.executeQuery("SELECT week, day, start_time_slot, end_time_slot FROM SCHEDULED_SERVICES WHERE mechanic_id = '"+ mechanic_id +"' AND sc_id = '"+ sc_id +"'");
+        rs6.next();
+        String week = rs6.getString("week");
+        String day = rs6.getString("day");
+        String start_time_slot = rs6.getString("start_time_slot");
+        String end_time_slot = rs6.getString("end_time_slot");
+        if(week.equals(week1) || day.equals(day1) || start_time_slot.equals(slot_starting_time1) || end_time_slot.equals(slot_ending_time1))
+        {
+            System.out.println("\nYou don't have shift on your requested timing.\n-----> Please enter the right shift timing");
+            requestSwap(mechanic_id, sc_id);
+        }
+        rs6.close();
+
         
         System.out.print("\n---Employee ID of Mechanic with whom you want to swap: ---");
         System.out.print("\nEmployee ID: ");
@@ -2006,27 +2020,37 @@ class Mechanic
         }
         rs4.close();
 
+        System.out.print("\n---Interested timeslot range: ---");
+            // System.out.print("\nWeek(1 to 4): ");
+            // String week2 = request_swap.nextLine();
+            // System.out.print("Day(1 to 7): ");
+            // String day2 = request_swap.nextLine();
+            System.out.print("\nSlot starting time ID(1 to 11): ");
+            String slot_starting_time2 = request_swap.nextLine();
+            System.out.print("Slot ending time ID(1 to 11): ");
+            String slot_ending_time2 = request_swap.nextLine();
+            System.out.println();
+        
 
-        ResultSet rs5 = stmt.executeQuery("SELECT COUNT(*) FROM EMPLOYEE E, SERVICE_CENTER SC WHERE E.emp_id = '"+ employee_id +"' AND SC.sc_id = '"+ sc_id +"'");
+        ResultSet rs5 = stmt.executeQuery("SELECT week, day, start_time_slot, end_time_slot FROM SCHEDULED_SERVICES WHERE mechanic_id = '"+ employee_id +"' AND sc_id = '"+ sc_id +"'");
         rs5.next();
-        if(rs5.getInt("COUNT(*)") != 1)
+        if(week.equals(week1) || day.equals(day1) || start_time_slot.equals(slot_starting_time2) || end_time_slot.equals(slot_ending_time2))
         {
-            System.out.println("\nThis mechanic does not exists in your service center\n-----> Please enter the right employee id");
+            System.out.println("\nThis mechanic does not have shift on your requested timing.\n-----> Please enter the right employee id");
             System.out.print("\nEmployee ID: ");
             employee_id = request_swap.nextLine();
+            System.out.print("\n---Interested timeslot range: ---");
+            // System.out.print("\nWeek(1 to 4): ");
+            // String week2 = request_swap.nextLine();
+            // System.out.print("Day(1 to 7): ");
+            // String day2 = request_swap.nextLine();
+            System.out.print("\nSlot starting time ID(1 to 11): ");
+            slot_starting_time2 = request_swap.nextLine();
+            System.out.print("Slot ending time ID(1 to 11): ");
+            slot_ending_time2 = request_swap.nextLine();
+            System.out.println();
         }
         rs5.close();
-
-        System.out.print("\n---Interested timeslot range: ---");
-        // System.out.print("\nWeek(1 to 4): ");
-        // String week2 = request_swap.nextLine();
-        // System.out.print("Day(1 to 7): ");
-        // String day2 = request_swap.nextLine();
-        System.out.print("\nSlot starting time ID(1 to 11): ");
-        String slot_starting_time2 = request_swap.nextLine();
-        System.out.print("Slot ending time ID(1 to 11): ");
-        String slot_ending_time2 = request_swap.nextLine();
-        System.out.println();
 
         if(Integer.parseInt(week1)<5 && Integer.parseInt(day1)<8 && Integer.parseInt(slot_starting_time1)<12 && Integer.parseInt(slot_ending_time1)<12 && Integer.parseInt(slot_starting_time2)<12 && Integer.parseInt(slot_ending_time2)<12)
         {
@@ -2148,11 +2172,11 @@ class Mechanic
         }
         else
         {
-            System.out.println("-----> You don't have any swap request.");
+            System.out.println("\n-----> You don't have any swap request.");
             System.out.println("Go Back(Y/N)? ");
             System.out.print("\nEnter your choice here: ");
             accept_reject_swap_value = accept_reject_swap.nextLine();
-            if(accept_reject_swap_value == "Y")
+            if(accept_reject_swap_value.equals("Y"))
                 mechanicOptions(mechanic_id,sc_id);
             else
                 AcceptRejectSwap(mechanic_id,sc_id);
@@ -2165,29 +2189,40 @@ class Mechanic
 
         System.out.print("\nRequest ID: ");
         String request_id = manage_swap_request.nextLine();
-        System.out.println();
 
         Connection connection = JDBC_Helper.getConnection();
         Statement stmt = connection.createStatement();
 
         int check = 0;
 
+        //System.out.println(rid.length);
+
         for(int i=0; i<rid.length; i++)
         {
-            if(request_id == rid[i])
+            //System.out.println(rid[i]);
+            if(request_id.equals(rid[i]))
                 check++;
         }
 
         if(check==0)
         {
             System.out.println("\n--->You entered wrong request ID.");
-            System.out.print("\nRequest ID: ");
-            request_id = manage_swap_request.nextLine();
-            System.out.println();
+            manageSwapRequest(mechanic_id, sc_id, rid);
         }
         else
         {
-            System.out.println("1.  Accept Swap");
+            ResultSet rs = stmt.executeQuery("SELECT mechanic_id_1, start_time_1, end_time_1, start_time_2, end_time_2, week_1, week_2, day_1, day_2 FROM REQUEST_SWAP WHERE request_id = '"+ request_id +"'");
+            rs.next();
+            String mech_id = rs.getString("mechanic_id_1");
+            String start_time_1 = rs.getString("start_time_1");
+            String end_time_1 = rs.getString("end_time_1");
+            String start_time_2 = rs.getString("start_time_2");
+            String end_time_2 = rs.getString("end_time_2");
+            String week1 = rs.getString("week_1");
+            String week2 = rs.getString("week_2");
+            String day1 = rs.getString("day_1");
+            String day2 = rs.getString("day_2");
+            System.out.println("\n1.  Accept Swap");
             System.out.println("2.  Reject Swap");
             System.out.println("3.  Go Back");
 
@@ -2197,13 +2232,16 @@ class Mechanic
             switch(accept_reject_swap_value)
             {
                 case "1":
-
-                    stmt.executeQuery("UPDATE REQUEST_SWAP SET status = '"+ "Accepted" +"' WHERE reuest_id = '"+ request_id +"'");
-                    System.out.println("---> Request accepted successfully.");
+                    stmt.executeQuery("UPDATE SCHEDULED_SERVICES SET start_time_slot = '"+ start_time_1 +"', end_time_slot = '"+ end_time_1 +"' WHERE mechanic_id = '"+ mechanic_id +"' AND sc_id = '"+ sc_id +"' AND '"+ week2 +"' = week AND '"+ day2 +"' = day");
+                    stmt.executeQuery("UPDATE SCHEDULED_SERVICES SET start_time_slot = '"+ start_time_2 +"', end_time_slot = '"+ end_time_2 +"' WHERE mechanic_id = '"+ mech_id +"' AND sc_id = '"+ sc_id +"'AND '"+ week1 +"' = week AND '"+ day1 +"' = day");
+                    stmt.executeQuery("UPDATE REQUEST_SWAP SET status = '"+ "Accepted" +"' WHERE request_id = '"+ request_id +"'");
+                    System.out.println("\n---> Request accepted successfully.");
+                    AcceptRejectSwap(mechanic_id, sc_id);
                     break;
                 case "2":
-                    stmt.executeQuery("UPDATE REQUEST_SWAP SET status = '"+ "Rejected" +"' WHERE reuest_id = '"+ request_id +"'");
-                    System.out.println("---> Request rejected successfully.");
+                    stmt.executeQuery("UPDATE REQUEST_SWAP SET status = '"+ "Rejected" +"' WHERE request_id = '"+ request_id +"'");
+                    System.out.println("\n---> Request rejected successfully.");
+                    AcceptRejectSwap(mechanic_id, sc_id);
                     break;
                 case "3":
                     mechanicOptions(mechanic_id,sc_id);
