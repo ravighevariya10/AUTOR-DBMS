@@ -1,4 +1,5 @@
-Instructions on how to compile and execute the code
+Instructions on how to compile and execute the code:
+
 The procedures for setting up the environment needed to compile and run the code are listed below.
 A.	REMOTE CONNECTION
   1.	Putty is required to establish a connection to the remote EOS server. Click here to download it.
