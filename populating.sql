@@ -1,6 +1,10 @@
+--SERVICE_CENTER :-
+
 INSERT INTO SERVICE_CENTER(sc_id, address, phone_number, open_on_saturday, min_wage, max_wage, hourly_rate) VALUES('30001','3921 Western Blvd, Raleigh, NC 27606', 3392601234, 'Y', 30, 40, '35');
 INSERT INTO SERVICE_CENTER(sc_id, address, phone_number, open_on_saturday, min_wage, max_wage, hourly_rate) VALUES('30002','4500 Preslyn Dr Suite 103, Raleigh, NC 27616', 8576890280, 'Y', 25, 35, '25');
 INSERT INTO SERVICE_CENTER(sc_id, address, phone_number, open_on_saturday, min_wage, max_wage, hourly_rate) VALUES('30003','9515 Chapel Hill Rd, Morrisville, NC 27560', 7798182200, 'N', 20, 25, '22');
+
+--EMPLOYEE (MECHANIC)
 
 INSERT INTO EMPLOYEE (emp_id, sc_id, emp_name, emp_email, emp_address, emp_contact, emp_role, emp_startdate, emp_compensation) VALUES (132457689, '30001', 'James Williams', 'jwilliams@gmail.com', '1400 Gorman St, Raleigh, NC 27606-2972', '4576312882', 'MECHANIC', TO_DATE('7/2/2021', 'MM/DD/YYYY'), 35);
 INSERT INTO EMPLOYEE (emp_id, sc_id, emp_name, emp_email, emp_address, emp_contact, emp_role, emp_startdate, emp_compensation) VALUES (314275869, '30001', 'David Johnson', 'djohnson@ymail.com', '686 Stratford Court, Raleigh, NC 27606', '9892321100', 'MECHANIC', TO_DATE ('8/25/2021', 'MM/DD/YYYY'), 35);
@@ -16,6 +20,177 @@ INSERT INTO EMPLOYEE (emp_id, sc_id, emp_name, emp_email, emp_address, emp_conta
 INSERT INTO EMPLOYEE (emp_id, sc_id, emp_name, emp_email, emp_address, emp_contact, emp_role, emp_startdate, emp_compensation) VALUES (123450678, '30003', 'Mark Mendez', 'mmendez@yahoo.com', '140 Southport Drive, Morrisville, NC 27560', '3395792080', 'MECHANIC', TO_DATE ('10/31/2021', 'MM/DD/YYYY'), 22);
 INSERT INTO EMPLOYEE (emp_id, sc_id, emp_name, emp_email, emp_address, emp_contact, emp_role, emp_startdate, emp_compensation) VALUES (123405678, '30003', 'Lisa Alberti', 'lalberti@yahoo.com', '100 Valley Glen Drive, Morrisville, NC 27560', '3391126787', 'MECHANIC', TO_DATE ('11/01/2021', 'MM/DD/YYYY'), 22);
 
+--SERVICES
+
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Belt Replacement', 101, 1);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Engine Repair', 102, 5);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Exhaust Repair', 103, 4);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Muffler Repair', 104, 2);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Alternator Repair', 105, 4);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Power Lock Repair', 106, 5);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Axle Repair', 107, 7);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Brake Repair', 108, 3);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Tire Balancing', 109, 2);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Wheel Alignment', 110, 1);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Compressor Repair', 111, 3);
+INSERT INTO REPAIR(service_name, s_no, duration) VALUES ('Evaporator Repair', 112, 4);
+
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('A', 113, 'Oil Change', 'm');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('A', 114, 'Filter Replacement', 'm');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('B', 113, 'Oil Change', 'm');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('B', 114, 'Filter Replacement', 'm');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('B', 108, 'Brake Repair', 'mr');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('B', 115, 'Check Engine Oil Diagnostics', 'm');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('C', 113, 'Oil Change', 'm');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('C', 114, 'Filter Replacement', 'm');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('C', 108, 'Brake Repair', 'mr');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('C', 116, 'Suspension Repair', 'm');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('C', 112, 'Evaporator Repair', 'mr');
+INSERT INTO MAINTENANCE(schedule_name, s_no, service_name, service_type) VALUES ('C', 115, 'Check Engine Oil Diagnostics', 'm');
+
+INSERT INTO MAINTENANCE_DURATION(schedule_name, duration, s_no) VALUES('A',3,117);
+INSERT INTO MAINTENANCE_DURATION(schedule_name, duration, s_no) VALUES('B',6,118);
+INSERT INTO MAINTENANCE_DURATION(schedule_name, duration, s_no) VALUES('C',9,119);
+
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',50,109);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',70,109);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',60,109);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',140,101);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',140,104);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',140,110);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',175,101);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',175,104);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',175,110);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',160,101);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',160,104);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',160,110);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',400,102);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',400,105);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',400,106);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',400,108);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',400,112);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',500,102);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',500,105);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',500,106);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',500,108);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',500,112);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',450,102);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',450,105);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',450,106);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',450,108);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',450,112);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',590,103);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',590,111);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',700,103);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',700,111);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',680,103);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',680,111);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',1000,107);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',1200,107);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',1100,107);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',120,113);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',190,113);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',200,113);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',195,114);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',210,114);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',215,114);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Honda',300,115);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Nissan',310,115);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30001','Toyota',305,115);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',70,109);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',90,109);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',80,109);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',160,101);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',160,110);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',160,104);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',195,101);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',195,110);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',195,104);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',180,101);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',180,110);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',180,104);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',420,102);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',420,105);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',420,106);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',420,108);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',420,112);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',520,102);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',520,105);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',520,106);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',520,108);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',520,112);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',470,102);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',470,105);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',470,106);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',470,108);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',470,112);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',610,103);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',610,111);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',720,103);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',720,111);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',700,103);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',700,111);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',1020,107);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',1220,107);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',1120,107);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',125,113);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',195,113);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',205,113);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',200,114);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',215,114);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',220,114);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Honda',305,115);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Nissan',315,115);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30002','Toyota',310,115);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',85,109);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',105,109);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',95,109);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',175,101);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',175,110);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',175,104);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',210,101);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',210,110);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',210,104);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',195,101);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',195,110);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',195,104);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',435,102);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',435,105);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',435,106);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',435,108);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',435,112);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',535,102);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',535,105);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',535,106);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',535,108);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',535,112);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',485,102);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',485,105);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',485,106);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',485,108);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',485,112);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',625,103);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',625,111);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',735,103);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',735,111);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',715,103);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',715,111);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',1035,107);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',1235,107);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',1135,107);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',140,113);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',180,113);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',195,113);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',210,114);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',220,114);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',215,114);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Honda',310,115);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Nissan',305,115);
+INSERT INTO PRICE_CHECK(sc_id, manufacturer, price, s_no) VALUES('30003','Toyota',310,115);
+
+
+--CUSTOMER
+
 INSERT INTO CUSTOMER(c_id, sc_id, c_name) VALUES(10001, '30001', 'Peter Parker');
 INSERT INTO CUSTOMER(c_id, sc_id, c_name) VALUES(10002, '30001', 'Diana Prince');
 INSERT INTO CUSTOMER(c_id, sc_id, c_name) VALUES(10053, '30002', 'Billy Batson');
@@ -30,26 +205,12 @@ INSERT INTO CUSTOMER(c_id, sc_id, c_name) VALUES(10501, '30003', 'Wanda Maximoff
 INSERT INTO CUSTOMER(c_id, sc_id, c_name) VALUES(10010, '30003', 'Virginia Potts');
 
 
-INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS) VALUES ('10501', 'Wanda Maximoff', '30003', 'P39VN198', 'Nissan', '39500', 'Wheel Alignment', '1', '2', '1', '2', '123405678', 'Unpaid');
-INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS) VALUES ('10010', 'Virginia Potts', '30003', '39YVS415', 'Honda', '49900', 'Belt Replacement', '1', '2', '1', '2', '123450678', 'Unpaid');
-INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS) VALUES ('10062', 'Sam Wilson', '30003', '29T56WC3', 'Nissan', '51300', 'Tire Balancing', '1', '1', '1', '2', '123456780', 'Paid');
-INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS) VALUES ('10035', 'Happy Hogan', '30002', '9R2UHP54', 'Honda', '67900', 'Alternator Repair', '2', '4', '2', '6', '423186759', 'Paid');
-INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS) VALUES ('10053', 'Billy Batson', '30002', '5TR3K914', 'Nissan', '111000', 'Compressor Repair', '2', '1', '3', '6', '125689347', 'Paid');
-INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS) VALUES ('10010', 'Bruce Wayne', '30002', '15DC9A87', 'Toyota', '21000', 'B', '2', '6', '2', '8', '789123456', 'Paid');
-INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS) VALUES ('10001', 'Steve Rogers', '30002', '18S5R2D8', 'Nissan', '195500', 'A', '3', '5', '5', '8', '125689347', 'Paid');
+--SCHEDULED_SERVICES
 
-
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('132457689','30001','MECHANIC','abcd1','abcd1')
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('314275869','30001','MECHANIC','abcd2','abcd2')
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('241368579','30001','MECHANIC','abcd3','abcd3')
-
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('423186759','30002','MECHANIC','abcd4','abcd4');
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('123789456','30002','MECHANIC','abcd5','abcd5');
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('789123456','30002','MECHANIC','abcd6','abcd6');
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('125689347','30002','MECHANIC','abcd7','abcd7');
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('347812569','30003','MECHANIC','abcd8','abcd8');
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('123456780','30003','MECHANIC','abcd9','abcd9');
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('123456708','30003','MECHANIC','abcd10','abcd10');
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('123456078','30003','MECHANIC','abcd11','abcd11');
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('123450678','30003','MECHANIC','abcd12','abcd12');
-INSERT INTO EMPLOYEE_AUTH(EMP_ID,SC_ID,EMP_ROLE,USERNAME,PASSWORD) VALUES('123405678','30003','MECHANIC','abcd13','abcd13');
+INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS, INVOICE_ID, AMOUNT_PAID, AMOUNT_REMAINED, SCHEDULE_DATE, SERVICE_TYPE) VALUES ('10501', 'Wanda Maximoff', '30003', 'P39VN198', 'Nissan', '39500', 'Wheel Alignment', '1', '2', '1', '2', '123405678', 'Unpaid','1','0','210', TO_DATE('7/2/2021', 'MM/DD/YYYY'), 'Repair');
+INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS, INVOICE_ID, AMOUNT_PAID, AMOUNT_REMAINED, SCHEDULE_DATE, SERVICE_TYPE) VALUES ('10010', 'Virginia Potts', '30003', '39YVS415', 'Honda', '49900', 'Belt Replacement', '1', '2', '1', '2', '123450678', 'Unpaid','2','0','175', TO_DATE('7/6/2021', 'MM/DD/YYYY'), 'Repair');
+INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS, INVOICE_ID, AMOUNT_PAID, AMOUNT_REMAINED, SCHEDULE_DATE, SERVICE_TYPE) VALUES ('10062', 'Sam Wilson', '30003', '29T56WC3', 'Nissan', '51300', 'Tire Balancing', '1', '1', '1', '2', '123456780', 'Paid','3','0','105', TO_DATE('7/7/2021', 'MM/DD/YYYY'), 'Repair');
+INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS, INVOICE_ID, AMOUNT_PAID, AMOUNT_REMAINED, SCHEDULE_DATE, SERVICE_TYPE) VALUES ('10035', 'Happy Hogan', '30002', '9R2UHP54', 'Honda', '67900', 'Alternator Repair', '2', '4', '2', '6', '423186759', 'Paid','4','0','420', TO_DATE('7/10/2021', 'MM/DD/YYYY'), 'Repair');
+INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS, INVOICE_ID, AMOUNT_PAID, AMOUNT_REMAINED, SCHEDULE_DATE, SERVICE_TYPE) VALUES ('10053', 'Billy Batson', '30002', '5TR3K914', 'Nissan', '111000', 'Compressor Repair', '2', '1', '3', '6', '125689347', 'Paid','5','0','720', TO_DATE('7/12/2021', 'MM/DD/YYYY'), 'Repair');
+INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS, INVOICE_ID, AMOUNT_PAID, AMOUNT_REMAINED, SCHEDULE_DATE, SERVICE_TYPE) VALUES ('10010', 'Bruce Wayne', '30002', '15DC9A87', 'Toyota', '21000', 'B', '2', '6', '2', '8', '789123456', 'Paid','6','0','220', TO_DATE('7/15/2021', 'MM/DD/YYYY'), 'Repair');
+INSERT INTO scheduled_services (C_ID, FULL_NAME, SC_ID, VIN, MANUFACTURER, MILEAGE, SCHEDULE_SERVICE, WEEK, DAY, START_TIME_SLOT, END_TIME_SLOT, MECHANIC_ID, INVOICE_STATUS, INVOICE_ID, AMOUNT_PAID, AMOUNT_REMAINED, SCHEDULE_DATE, SERVICE_TYPE) VALUES ('10001', 'Steve Rogers', '30002', '18S5R2D8', 'Nissan', '195500', 'A', '3', '5', '5', '8', '125689347', 'Paid','7','0','520', TO_DATE('7/20/2021', 'MM/DD/YYYY'), 'Repair');
